@@ -1,10 +1,17 @@
-package gohttp
+package main
 
 import (
+	"fmt"
 	"github.com/cploutarchou/go-http/http"
+	"io"
 )
 
-func exampleUsage() {
+func main() {
 	client := http.NewClient()
-	client.Get()
+	response, err := client.Get("https://api.github.com", nil)
+	if err != nil {
+		panic(err)
+	}
+	bytes, err := io.ReadAll(response.Body)
+	fmt.Println(string(bytes))
 }
