@@ -12,14 +12,15 @@ type client struct {
 }
 
 type Client interface {
+	SetHeaders(http.Header)
+	MakeHeaders() http.Header
+
 	Get(string, http.Header) (*http.Response, error)
 	Post(string, http.Header, interface{}) (*http.Response, error)
 	Put(string, http.Header, interface{}) (*http.Response, error)
 	Patch(string, http.Header, interface{}) (*http.Response, error)
 	Delete(string, http.Header, interface{}) (*http.Response, error)
 	Head(string, http.Header, interface{}) (*http.Response, error)
-	SetHeaders(http.Header)
-	MakeHeaders() http.Header
 }
 
 func NewClient() Client {
@@ -29,9 +30,11 @@ func NewClient() Client {
 func (c *client) SetHeaders(h http.Header) {
 	c.Headers = h
 }
+
 func (c *client) MakeHeaders() http.Header {
 	return make(http.Header)
 }
+
 func (c *client) Get(url string, headers http.Header) (*http.Response, error) {
 	response, err := c.do(http.MethodGet, url, headers, nil)
 	if err != nil {

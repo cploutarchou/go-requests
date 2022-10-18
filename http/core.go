@@ -20,7 +20,7 @@ func (c *client) do(method Method, url string, headers http.Header, body []byte)
 		return nil, errors.New("unable to create request")
 	}
 
-	// Set all setted headers to the http request
+	// Set all set headers to the http request
 	availableHeaders := c.getHeaders(headers)
 	req.Header = availableHeaders
 	return _client.Do(req)
