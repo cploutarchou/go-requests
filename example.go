@@ -7,9 +7,7 @@ import (
 	"github.com/cploutarchou/go-http/http"
 )
 
-var (
-	client http.Client
-)
+var client http.Client
 
 func getGithubClient() http.Client {
 	_client := http.NewClient()
@@ -18,9 +16,11 @@ func getGithubClient() http.Client {
 	_client.SetHeaders(commonHeaders)
 	return _client
 }
+
 func init() {
 	client = getGithubClient()
 }
+
 func main() {
 	response, err := client.Get("https://api.github.com", nil)
 	client.MakeHeaders()
