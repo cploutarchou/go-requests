@@ -7,7 +7,9 @@ import (
 
 type Method string
 
-type client struct{}
+type client struct {
+	Headers http.Header
+}
 
 type Client interface {
 	Get(string, http.Header) (*http.Response, error)
@@ -16,12 +18,20 @@ type Client interface {
 	Patch(string, http.Header, interface{}) (*http.Response, error)
 	Delete(string, http.Header, interface{}) (*http.Response, error)
 	Head(string, http.Header, interface{}) (*http.Response, error)
+	SetHeaders(http.Header)
+	MakeHeaders() http.Header
 }
 
 func NewClient() Client {
 	return &client{}
 }
 
+func (c *client) SetHeaders(h http.Header) {
+	c.Headers = h
+}
+func (c *client) MakeHeaders() http.Header {
+	return make(http.Header)
+}
 func (c *client) Get(url string, headers http.Header) (*http.Response, error) {
 	response, err := c.do(http.MethodGet, url, headers, nil)
 	if err != nil {
