@@ -2,16 +2,45 @@ package http
 
 import (
 	"bytes"
+	"encoding/json"
+	"encoding/xml"
 	"errors"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"path/filepath"
+	"strings"
 )
 
-func (c *client) do(method Method, url string, headers http.Header, body []byte) (*http.Response, error) {
+func (c *client) getBody(contentType string, body interface{}) ([]byte, error) {
+	if body == nil {
+		return nil, nil
+	}
+	switch strings.ToLower(contentType) {
+	case "application/json":
+		return c.interfaceToJsonBytes(body)
+	case "application/xml":
+		data, err := xml.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+		return data, nil
+	default:
+		return c.interfaceToJsonBytes(body)
+	}
+}
+func (c *client) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
 	_client := &http.Client{}
 	var err error
 	var req *http.Request
+
+	availableHeaders := c.getHeaders(headers)
+	requestBody, err := c.getBody(availableHeaders.Get("Content-Type"), body)
+	if err != nil {
+		return nil, err
+	}
 	if body != nil {
-		reader := bytes.NewReader(body)
+		reader := bytes.NewReader(requestBody)
 		req, err = http.NewRequest(string(method), url, reader)
 	} else {
 		req, err = http.NewRequest(string(method), url, nil)
@@ -20,8 +49,8 @@ func (c *client) do(method Method, url string, headers http.Header, body []byte)
 		return nil, errors.New("unable to create request")
 	}
 
-	// Set all setted headers to the http request
-	availableHeaders := c.getHeaders(headers)
+	// Set all set headers to the http request
+
 	req.Header = availableHeaders
 	return _client.Do(req)
 }
@@ -41,4 +70,12 @@ func (c *client) getHeaders(headers http.Header) http.Header {
 		}
 	}
 	return res
+}
+
+func (c *client) interfaceToJsonBytes(data interface{}) ([]byte, error) {
+	res, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
