@@ -12,7 +12,9 @@ type client struct {
 }
 
 type Client interface {
+	//SetHeaders sets the headers for the request
 	SetHeaders(http.Header)
+	//MakeHeaders Returns the headers for the request
 	MakeHeaders() http.Header
 
 	Get(string, http.Header) (*http.Response, error)
@@ -44,11 +46,7 @@ func (c *client) Get(url string, headers http.Header) (*http.Response, error) {
 }
 
 func (c *client) Post(url string, headers http.Header, body interface{}) (*http.Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodGet, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -56,11 +54,7 @@ func (c *client) Post(url string, headers http.Header, body interface{}) (*http.
 }
 
 func (c *client) Put(url string, headers http.Header, body interface{}) (*http.Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodGet, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -92,11 +86,7 @@ func (c *client) Patch(url string, headers http.Header, body interface{}) (*http
 }
 
 func (c *client) Head(url string, headers http.Header, body interface{}) (*http.Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodGet, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
