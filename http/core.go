@@ -5,10 +5,8 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"io"
-	"mime/multipart"
 	"net/http"
-	"path/filepath"
+
 	"strings"
 )
 
