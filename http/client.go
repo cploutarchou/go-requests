@@ -46,7 +46,11 @@ func (c *client) Get(url string, headers http.Header) (*http.Response, error) {
 }
 
 func (c *client) Post(url string, headers http.Header, body interface{}) (*http.Response, error) {
-	response, err := c.do(http.MethodGet, url, headers, body)
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	response, err := c.do(http.MethodGet, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +58,11 @@ func (c *client) Post(url string, headers http.Header, body interface{}) (*http.
 }
 
 func (c *client) Put(url string, headers http.Header, body interface{}) (*http.Response, error) {
-	response, err := c.do(http.MethodGet, url, headers, body)
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	response, err := c.do(http.MethodGet, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +94,11 @@ func (c *client) Patch(url string, headers http.Header, body interface{}) (*http
 }
 
 func (c *client) Head(url string, headers http.Header, body interface{}) (*http.Response, error) {
-	response, err := c.do(http.MethodGet, url, headers, body)
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	response, err := c.do(http.MethodGet, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
