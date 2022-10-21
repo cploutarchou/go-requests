@@ -16,15 +16,11 @@ func (c *client) getBody(contentType string, body interface{}) ([]byte, error) {
 	}
 	switch strings.ToLower(contentType) {
 	case "application/json":
-		return c.interfaceToJsonBytes(body)
+		return c.interfaceToJSONBytes(body)
 	case "application/xml":
-		data, err := xml.Marshal(body)
-		if err != nil {
-			return nil, err
-		}
-		return data, nil
+		return c.interfaceToXMLBytes(body)
 	default:
-		return c.interfaceToJsonBytes(body)
+		return c.interfaceToJSONBytes(body)
 	}
 }
 func (c *client) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
@@ -70,8 +66,15 @@ func (c *client) getHeaders(headers http.Header) http.Header {
 	return res
 }
 
-func (c *client) interfaceToJsonBytes(data interface{}) ([]byte, error) {
+func (c *client) interfaceToJSONBytes(data interface{}) ([]byte, error) {
 	res, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+func (c *client) interfaceToXMLBytes(data interface{}) ([]byte, error) {
+	res, err := xml.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
