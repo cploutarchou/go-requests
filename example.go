@@ -6,10 +6,10 @@ import (
 	"io"
 )
 
-var client http.Client
+var client http.GoHttpClient
 
-func getGithubClient() http.Client {
-	_client := http.NewClient()
+func getGithubClient() http.GoHttpClient {
+	_client := http.NewClient(http.DefaultConfig)
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Add("Accept", "application/json")
 	_client.SetHeaders(commonHeaders)
@@ -34,7 +34,12 @@ func main() {
 		Username:  "username",
 	}
 	PostExample(user)
-
+	GetExample()
+	GetExample()
+	GetExample()
+	GetExample()
+	GetExample()
+	GetExample()
 }
 
 func GetExample() {

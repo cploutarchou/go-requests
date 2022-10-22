@@ -2,21 +2,34 @@ package http
 
 import (
 	"encoding/json"
+	"net"
 	"net/http"
+	"time"
 )
 
 type Method string
 
-type client struct {
-	Headers http.Header
-}
+var (
+	DefaultConfig *Config
+)
 
-type Client interface {
+type goHttpClient struct {
+	Headers http.Header
+	client  *http.Client
+}
+type Config struct {
+	// Timeout is the timeout for HTTP response in nanoseconds
+	ResponseTimeout time.Duration
+	// Timeout is the timeout for HTTP requests in nanoseconds
+	RequestTimeout time.Duration
+	// MaxIdleConnections is the maximum number of connections in idle
+	MaxIdleConnections int
+}
+type GoHttpClient interface {
 	//SetHeaders sets the headers for the request
 	SetHeaders(http.Header)
 	//MakeHeaders Returns the headers for the request
 	MakeHeaders() http.Header
-
 	Get(string, http.Header) (*http.Response, error)
 	Post(string, http.Header, interface{}) (*http.Response, error)
 	Put(string, http.Header, interface{}) (*http.Response, error)
@@ -25,19 +38,37 @@ type Client interface {
 	Head(string, http.Header, interface{}) (*http.Response, error)
 }
 
-func NewClient() Client {
-	return &client{}
+func NewClient(config *Config) GoHttpClient {
+	if config == nil {
+		config = &Config{
+			RequestTimeout:     2,
+			MaxIdleConnections: 5,
+			ResponseTimeout:    5,
+		}
+	}
+	client := http.Client{
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost:   config.MaxIdleConnections,
+			ResponseHeaderTimeout: config.RequestTimeout * time.Second,
+			DialContext: (&net.Dialer{
+				Timeout: config.ResponseTimeout * time.Second,
+			}).DialContext,
+		},
+	}
+	return &goHttpClient{
+		client: &client,
+	}
 }
 
-func (c *client) SetHeaders(h http.Header) {
+func (c *goHttpClient) SetHeaders(h http.Header) {
 	c.Headers = h
 }
 
-func (c *client) MakeHeaders() http.Header {
+func (c *goHttpClient) MakeHeaders() http.Header {
 	return make(http.Header)
 }
 
-func (c *client) Get(url string, headers http.Header) (*http.Response, error) {
+func (c *goHttpClient) Get(url string, headers http.Header) (*http.Response, error) {
 	response, err := c.do(http.MethodGet, url, headers, nil)
 	if err != nil {
 		return nil, err
@@ -45,7 +76,7 @@ func (c *client) Get(url string, headers http.Header) (*http.Response, error) {
 	return response, nil
 }
 
-func (c *client) Post(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHttpClient) Post(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -57,7 +88,7 @@ func (c *client) Post(url string, headers http.Header, body interface{}) (*http.
 	return response, nil
 }
 
-func (c *client) Put(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHttpClient) Put(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -69,7 +100,7 @@ func (c *client) Put(url string, headers http.Header, body interface{}) (*http.R
 	return response, nil
 }
 
-func (c *client) Delete(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHttpClient) Delete(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -81,7 +112,7 @@ func (c *client) Delete(url string, headers http.Header, body interface{}) (*htt
 	return response, nil
 }
 
-func (c *client) Patch(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHttpClient) Patch(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -93,7 +124,7 @@ func (c *client) Patch(url string, headers http.Header, body interface{}) (*http
 	return response, nil
 }
 
-func (c *client) Head(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHttpClient) Head(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
