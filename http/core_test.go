@@ -6,10 +6,10 @@ import (
 
 func TestGetHeaders(t *testing.T) {
 	// Initialization
-	_client := client{}
+	_client := goHttpClient{}
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Set("Content-Type", "application/json")
-	commonHeaders.Set("User-Agent", "the-best-http-client")
+	commonHeaders.Set("User-Agent", "the-best-http-goHttpClient")
 	_client.Headers = commonHeaders
 	// Execution
 	requestHeaders := _client.MakeHeaders()
@@ -26,14 +26,14 @@ func TestGetHeaders(t *testing.T) {
 		t.Errorf("expected 'Content-Type' header. Provided %s", headers.Get("Content-Type"))
 	}
 
-	if headers.Get("User-Agent") != "the-best-http-client" {
+	if headers.Get("User-Agent") != "the-best-http-goHttpClient" {
 		t.Errorf("expected 'User-Agent' header. Provided %s", headers.Get("User-Agent"))
 	}
 }
 
 func TestGetBody(t *testing.T) {
 	// Initialization
-	_client := client{}
+	_client := goHttpClient{}
 	t.Run("noBody", func(t *testing.T) {
 		// Execution
 		requestBody, err := _client.getBody("", nil)

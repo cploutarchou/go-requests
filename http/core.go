@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func (c *client) getBody(contentType string, body interface{}) ([]byte, error) {
+func (c *goHttpClient) getBody(contentType string, body interface{}) ([]byte, error) {
 	if body == nil {
 		return nil, nil
 	}
@@ -23,11 +23,9 @@ func (c *client) getBody(contentType string, body interface{}) ([]byte, error) {
 		return c.interfaceToJSONBytes(body)
 	}
 }
-func (c *client) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
-	_client := &http.Client{}
+func (c *goHttpClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
 	var err error
 	var req *http.Request
-
 	availableHeaders := c.getHeaders(headers)
 	requestBody, err := c.getBody(availableHeaders.Get("Content-Type"), body)
 	if err != nil {
@@ -42,14 +40,12 @@ func (c *client) do(method Method, url string, headers http.Header, body interfa
 	if err != nil {
 		return nil, errors.New("unable to create request")
 	}
-
 	// Set all set headers to the http request
-
 	req.Header = availableHeaders
-	return _client.Do(req)
+	return c.client.Do(req)
 }
 
-func (c *client) getHeaders(headers http.Header) http.Header {
+func (c *goHttpClient) getHeaders(headers http.Header) http.Header {
 	res := make(http.Header)
 	// Set common headers to the request
 	for header, value := range c.Headers {
@@ -66,14 +62,14 @@ func (c *client) getHeaders(headers http.Header) http.Header {
 	return res
 }
 
-func (c *client) interfaceToJSONBytes(data interface{}) ([]byte, error) {
+func (c *goHttpClient) interfaceToJSONBytes(data interface{}) ([]byte, error) {
 	res, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
-func (c *client) interfaceToXMLBytes(data interface{}) ([]byte, error) {
+func (c *goHttpClient) interfaceToXMLBytes(data interface{}) ([]byte, error) {
 	res, err := xml.Marshal(data)
 	if err != nil {
 		return nil, err
