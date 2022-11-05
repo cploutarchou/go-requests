@@ -6,7 +6,7 @@ import (
 
 func TestGetHeaders(t *testing.T) {
 	// Initialization
-	_client := goHttpClient{}
+	_client := goHTTPClient{}
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Set("Content-Type", "application/json")
 	commonHeaders.Set("User-Agent", "the-best-http-goHttpClient")
@@ -15,7 +15,7 @@ func TestGetHeaders(t *testing.T) {
 	requestHeaders := _client.MakeHeaders()
 	requestHeaders.Set("X-Request-ID", "ABC123")
 	headers := _client.getHeaders(requestHeaders)
-	//Validation
+	// Validation
 	if len(headers) != 3 {
 		t.Errorf("expected 3 headers. Provided only %d", len(headers))
 	}
@@ -33,11 +33,11 @@ func TestGetHeaders(t *testing.T) {
 
 func TestGetBody(t *testing.T) {
 	// Initialization
-	_client := goHttpClient{}
+	_client := goHTTPClient{}
 	t.Run("noBody", func(t *testing.T) {
 		// Execution
 		requestBody, err := _client.getBody("", nil)
-		//Validation
+		// Validation
 		if err != nil {
 			t.Errorf("expected no error when passed a nil body. Provided %s", err.Error())
 		}
@@ -49,7 +49,7 @@ func TestGetBody(t *testing.T) {
 		// Execution
 		body := []string{"Hello", "World"}
 		requestBody, err := _client.getBody("application/json", body)
-		//Validation
+		// Validation
 		if err != nil {
 			t.Errorf("expected no error when passed a json body. Provided %s", err.Error())
 		}
@@ -75,14 +75,12 @@ func TestGetBody(t *testing.T) {
 		// Execution
 		body := []string{"Hello", "World"}
 		requestBody, err := _client.getBody("", body)
-		//Validation
+		// Validation
 		if err != nil {
 			t.Errorf("expected no error when passed a json body. Provided %s", err.Error())
 		}
-
 		if string(requestBody) != `["Hello","World"]` {
 			t.Errorf("invalid request body. Provided %s", string(requestBody))
 		}
 	})
-
 }

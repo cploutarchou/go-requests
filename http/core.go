@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func (c *goHttpClient) getBody(contentType string, body interface{}) ([]byte, error) {
+func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, error) {
 	if body == nil {
 		return nil, nil
 	}
@@ -23,7 +23,7 @@ func (c *goHttpClient) getBody(contentType string, body interface{}) ([]byte, er
 		return c.interfaceToJSONBytes(body)
 	}
 }
-func (c *goHttpClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
 	var err error
 	var req *http.Request
 	availableHeaders := c.getHeaders(headers)
@@ -45,7 +45,7 @@ func (c *goHttpClient) do(method Method, url string, headers http.Header, body i
 	return c.client.Do(req)
 }
 
-func (c *goHttpClient) getHeaders(headers http.Header) http.Header {
+func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 	res := make(http.Header)
 	// Set common headers to the request
 	for header, value := range c.Headers {
@@ -62,14 +62,14 @@ func (c *goHttpClient) getHeaders(headers http.Header) http.Header {
 	return res
 }
 
-func (c *goHttpClient) interfaceToJSONBytes(data interface{}) ([]byte, error) {
+func (c *goHTTPClient) interfaceToJSONBytes(data interface{}) ([]byte, error) {
 	res, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
-func (c *goHttpClient) interfaceToXMLBytes(data interface{}) ([]byte, error) {
+func (c *goHTTPClient) interfaceToXMLBytes(data interface{}) ([]byte, error) {
 	res, err := xml.Marshal(data)
 	if err != nil {
 		return nil, err

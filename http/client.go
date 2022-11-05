@@ -13,7 +13,7 @@ var (
 	DefaultConfig *Config
 )
 
-type goHttpClient struct {
+type goHTTPClient struct {
 	Headers http.Header
 	client  *http.Client
 }
@@ -25,10 +25,10 @@ type Config struct {
 	// MaxIdleConnections is the maximum number of connections in idle
 	MaxIdleConnections int
 }
-type GoHttpClient interface {
-	//SetHeaders sets the headers for the request
+type GoHTTPClient interface {
+	// SetHeaders sets the headers for the request
 	SetHeaders(http.Header)
-	//MakeHeaders Returns the headers for the request
+	// MakeHeaders Returns the headers for the request
 	MakeHeaders() http.Header
 	Get(string, http.Header) (*http.Response, error)
 	Post(string, http.Header, interface{}) (*http.Response, error)
@@ -38,7 +38,7 @@ type GoHttpClient interface {
 	Head(string, http.Header, interface{}) (*http.Response, error)
 }
 
-func NewClient(config *Config) GoHttpClient {
+func NewClient(config *Config) GoHTTPClient {
 	if config == nil {
 		config = &Config{
 			RequestTimeout:     2,
@@ -55,20 +55,20 @@ func NewClient(config *Config) GoHttpClient {
 			}).DialContext,
 		},
 	}
-	return &goHttpClient{
+	return &goHTTPClient{
 		client: &client,
 	}
 }
 
-func (c *goHttpClient) SetHeaders(h http.Header) {
+func (c *goHTTPClient) SetHeaders(h http.Header) {
 	c.Headers = h
 }
 
-func (c *goHttpClient) MakeHeaders() http.Header {
+func (c *goHTTPClient) MakeHeaders() http.Header {
 	return make(http.Header)
 }
 
-func (c *goHttpClient) Get(url string, headers http.Header) (*http.Response, error) {
+func (c *goHTTPClient) Get(url string, headers http.Header) (*http.Response, error) {
 	response, err := c.do(http.MethodGet, url, headers, nil)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (c *goHttpClient) Get(url string, headers http.Header) (*http.Response, err
 	return response, nil
 }
 
-func (c *goHttpClient) Post(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) Post(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (c *goHttpClient) Post(url string, headers http.Header, body interface{}) (
 	return response, nil
 }
 
-func (c *goHttpClient) Put(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) Put(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (c *goHttpClient) Put(url string, headers http.Header, body interface{}) (*
 	return response, nil
 }
 
-func (c *goHttpClient) Delete(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (c *goHttpClient) Delete(url string, headers http.Header, body interface{})
 	return response, nil
 }
 
-func (c *goHttpClient) Patch(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) Patch(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (c *goHttpClient) Patch(url string, headers http.Header, body interface{}) 
 	return response, nil
 }
 
-func (c *goHttpClient) Head(url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (*http.Response, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err

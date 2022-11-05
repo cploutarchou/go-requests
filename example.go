@@ -6,9 +6,9 @@ import (
 	"io"
 )
 
-var client http.GoHttpClient
+var client http.GoHTTPClient
 
-func getGithubClient() http.GoHttpClient {
+func getGithubClient() http.GoHTTPClient {
 	_client := http.NewClient(http.DefaultConfig)
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Add("Accept", "application/json")
