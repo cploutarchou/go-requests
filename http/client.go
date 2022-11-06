@@ -9,13 +9,16 @@ import (
 
 type Method string
 
-var (
-	DefaultConfig *Config
+const (
+	defaultMaxIdleConnectionsPerHost = 10
+	defaultResponseTimeout           = 5 * time.Second
+	defaultRequestTimeout            = 5 * time.Second
 )
 
 type goHTTPClient struct {
 	Headers http.Header
 	client  *http.Client
+	Config  *Config
 }
 type Config struct {
 	// Timeout is the timeout for HTTP response in nanoseconds
@@ -25,10 +28,10 @@ type Config struct {
 	// MaxIdleConnections is the maximum number of connections in idle
 	MaxIdleConnections int
 }
+
+// GoHTTPClient is an interface for http client
 type GoHTTPClient interface {
-	// SetHeaders sets the headers for the request
 	SetHeaders(http.Header)
-	// MakeHeaders Returns the headers for the request
 	MakeHeaders() http.Header
 	Get(string, http.Header) (*http.Response, error)
 	Post(string, http.Header, interface{}) (*http.Response, error)
@@ -36,27 +39,25 @@ type GoHTTPClient interface {
 	Patch(string, http.Header, interface{}) (*http.Response, error)
 	Delete(string, http.Header, interface{}) (*http.Response, error)
 	Head(string, http.Header, interface{}) (*http.Response, error)
+	SetRequestTimeout(time.Duration)
+	SetResponseTimeout(time.Duration)
+	SetMaxIdleConnections(int)
+	SetConfig(*Config)
 }
 
-func NewClient(config *Config) GoHTTPClient {
-	if config == nil {
-		config = &Config{
-			RequestTimeout:     2,
-			MaxIdleConnections: 5,
-			ResponseTimeout:    5,
-		}
-	}
+func NewClient() GoHTTPClient {
 	client := http.Client{
 		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   config.MaxIdleConnections,
-			ResponseHeaderTimeout: config.RequestTimeout * time.Second,
+			MaxIdleConnsPerHost:   defaultMaxIdleConnectionsPerHost,
+			ResponseHeaderTimeout: defaultResponseTimeout,
 			DialContext: (&net.Dialer{
-				Timeout: config.ResponseTimeout * time.Second,
+				Timeout: defaultRequestTimeout,
 			}).DialContext,
 		},
 	}
 	return &goHTTPClient{
 		client: &client,
+		Config: &Config{},
 	}
 }
 
@@ -134,4 +135,20 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 		return nil, err
 	}
 	return response, nil
+}
+
+func (c *goHTTPClient) SetRequestTimeout(timeout time.Duration) {
+	c.Config.RequestTimeout = timeout
+}
+
+func (c *goHTTPClient) SetResponseTimeout(timeout time.Duration) {
+	c.Config.ResponseTimeout = timeout
+}
+func (c *goHTTPClient) SetMaxIdleConnections(maxIdleConnections int) {
+
+	c.Config.MaxIdleConnections = maxIdleConnections
+}
+
+func (c *goHTTPClient) SetConfig(config *Config) {
+	c.Config = config
 }

@@ -2,22 +2,43 @@ package main
 
 import (
 	"fmt"
-	"github.com/cploutarchou/go-http/http"
 	"io"
+	"time"
+
+	"github.com/cploutarchou/go-http/http"
 )
 
 var client http.GoHTTPClient
 
-func getGithubClient() http.GoHTTPClient {
-	_client := http.NewClient(http.DefaultConfig)
+func getGithubClientWithOutConfig() http.GoHTTPClient {
+	_client := http.NewClient()
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Add("Accept", "application/json")
 	_client.SetHeaders(commonHeaders)
 	return _client
 }
 
+func getGithubClientWithConfig() http.GoHTTPClient {
+	_client := http.NewClient()
+	_client.SetConfig(&http.Config{
+		MaxIdleConnections: 10,
+		ResponseTimeout:    50 * time.Second,
+		RequestTimeout:     50 * time.Second,
+	})
+	return _client
+}
+
+func getGithubClientBySetters() http.GoHTTPClient {
+	_client := http.NewClient()
+	_client.SetRequestTimeout(50 * time.Second)
+	_client.SetResponseTimeout(50 * time.Second)
+	_client.SetMaxIdleConnections(10)
+	return _client
+}
 func init() {
-	client = getGithubClient()
+	client = getGithubClientWithOutConfig()
+	client = getGithubClientWithConfig()
+	client = getGithubClientBySetters()
 }
 
 type User struct {
@@ -35,11 +56,7 @@ func main() {
 	}
 	PostExample(user)
 	GetExample()
-	GetExample()
-	GetExample()
-	GetExample()
-	GetExample()
-	GetExample()
+
 }
 
 func GetExample() {

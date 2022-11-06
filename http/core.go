@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"net/http"
-
 	"strings"
 )
 
@@ -23,6 +22,33 @@ func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, er
 		return c.interfaceToJSONBytes(body)
 	}
 }
+
+// do is the main method to make the request
+// It returns the response and an error if something goes wrong
+// It is private because it is only used by the public methods
+//
+//	func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
+//		var err error
+//		var req *http.Request
+//		availableHeaders := c.getHeaders(headers)
+//		requestBody, err := c.getBody(availableHeaders.Get("Content-Type"), body)
+//		if err != nil {
+//			return nil, err
+//		}
+//		if body != nil {
+//			reader := bytes.NewReader(requestBody)
+//			req, err = http.NewRequest(string(method), url, reader)
+//		} else {
+//			req, err = http.NewRequest(string(method), url, nil)
+//		}
+//		if err != nil {
+//			return nil, errors.New("unable to create request")
+//		}
+//		// Set all set headers to the http request
+//		req.Header = availableHeaders
+//		// Return the response
+//		return c.client.Do(req)
+//	}
 func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
 	var err error
 	var req *http.Request
@@ -42,7 +68,9 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	}
 	// Set all set headers to the http request
 	req.Header = availableHeaders
+	// Return the response
 	return c.client.Do(req)
+
 }
 
 func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
