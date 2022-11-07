@@ -61,6 +61,7 @@ func main() {
 
 func GetExample() {
 	response, err := client.Get("https://api.github.com", nil)
+	client.DisableTimeouts(true)
 	client.MakeHeaders()
 	if err != nil {
 		panic(err)
