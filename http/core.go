@@ -69,10 +69,11 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	// Set all set headers to the http request
 	req.Header = availableHeaders
 	// Return the response
+	c.client = c.getClient()
 	return c.client.Do(req)
-
 }
 
+// getHeaders returns the headers that are set
 func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 	res := make(http.Header)
 	// Set common headers to the request

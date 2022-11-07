@@ -16,17 +16,17 @@ const (
 )
 
 type goHTTPClient struct {
-	Headers http.Header
-	client  *http.Client
-	Config  *Config
+	Headers         http.Header
+	client          *http.Client
+	TimeoutSettings *TimeoutSettings
 }
 
-// Config is a struct that holds the configuration for the http client
+// TimeoutSettings is a struct that holds the configuration for the http client
 //
 //	RequestTimeout: the timeout for the request
 //	ResponseTimeout: the timeout for the response
 //	MaxIdleConnections: the maximum number of idle connections
-type Config struct {
+type TimeoutSettings struct {
 	ResponseTimeout    time.Duration
 	RequestTimeout     time.Duration
 	MaxIdleConnections int
@@ -48,22 +48,14 @@ type GoHTTPClient interface {
 	getRequestTimeout() time.Duration
 	getResponseTimeout() time.Duration
 	getMaxIdleConnections() int
-	SetConfig(*Config)
+	SetConfig(*TimeoutSettings)
 }
 
 func NewClient() GoHTTPClient {
-	client := http.Client{
-		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   defaultMaxIdleConnectionsPerHost,
-			ResponseHeaderTimeout: defaultResponseTimeout,
-			DialContext: (&net.Dialer{
-				Timeout: defaultRequestTimeout,
-			}).DialContext,
-		},
-	}
+	var client = &goHTTPClient{}
 	return &goHTTPClient{
-		client: &client,
-		Config: &Config{},
+		client:          client.getClient(),
+		TimeoutSettings: &TimeoutSettings{},
 	}
 }
 
@@ -153,37 +145,67 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 }
 
 func (c *goHTTPClient) SetRequestTimeout(timeout time.Duration) {
-	c.Config.RequestTimeout = timeout
+	c.TimeoutSettings.RequestTimeout = timeout
 }
 
 func (c *goHTTPClient) SetResponseTimeout(timeout time.Duration) {
-	c.Config.ResponseTimeout = timeout
+	c.TimeoutSettings.ResponseTimeout = timeout
 }
 func (c *goHTTPClient) SetMaxIdleConnections(maxConnections int) {
-	c.Config.MaxIdleConnections = maxConnections
+	c.TimeoutSettings.MaxIdleConnections = maxConnections
 }
 
-func (c *goHTTPClient) SetConfig(config *Config) {
-	c.Config = config
+func (c *goHTTPClient) SetConfig(config *TimeoutSettings) {
+	c.TimeoutSettings = config
 }
 
+// getRequestTimeout returns the request timeout
 func (c *goHTTPClient) getRequestTimeout() time.Duration {
-	if c.Config.RequestTimeout == 0 {
-		return defaultRequestTimeout
+	if c.TimeoutSettings.RequestTimeout != defaultRequestTimeout {
+		return c.TimeoutSettings.RequestTimeout
 	}
-	return c.Config.RequestTimeout
+	return defaultRequestTimeout
 }
 
 func (c *goHTTPClient) getResponseTimeout() time.Duration {
-	if c.Config.ResponseTimeout == 0 {
-		return defaultResponseTimeout
+	if c.TimeoutSettings.ResponseTimeout != defaultResponseTimeout {
+		return c.TimeoutSettings.ResponseTimeout
 	}
-	return c.Config.ResponseTimeout
+	return defaultResponseTimeout
 }
 
 func (c *goHTTPClient) getMaxIdleConnections() int {
-	if c.Config.MaxIdleConnections == 0 {
-		return defaultMaxIdleConnectionsPerHost
+	if c.TimeoutSettings.MaxIdleConnections != defaultMaxIdleConnectionsPerHost {
+		return c.TimeoutSettings.MaxIdleConnections
 	}
-	return c.Config.MaxIdleConnections
+	return defaultMaxIdleConnectionsPerHost
+}
+
+// getClient returns the *http.client if exist
+// or creates a new one with the default settings
+// and returns it.
+// The default settings are:
+//   - MaxIdleConnectionsPerHost: 10
+//   - RequestTimeout: 5 seconds
+//   - ResponseTimeout: 5 seconds
+func (c *goHTTPClient) getClient() *http.Client {
+	if c.client != nil {
+		return c.client
+	}
+	c.TimeoutSettings = &TimeoutSettings{
+		RequestTimeout:     defaultRequestTimeout,
+		ResponseTimeout:    defaultResponseTimeout,
+		MaxIdleConnections: defaultMaxIdleConnectionsPerHost,
+	}
+	client := http.Client{
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost:   c.getMaxIdleConnections(),
+			ResponseHeaderTimeout: c.getResponseTimeout(),
+			DialContext: (&net.Dialer{
+				Timeout: c.getRequestTimeout(),
+			}).DialContext,
+		},
+	}
+	c.client = &client
+	return c.client
 }
