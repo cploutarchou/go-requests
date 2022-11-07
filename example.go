@@ -20,7 +20,7 @@ func getGithubClientWithOutConfig() http.GoHTTPClient {
 
 func getGithubClientWithConfig() http.GoHTTPClient {
 	_client := http.NewClient()
-	_client.SetConfig(&http.Config{
+	_client.SetConfig(&http.TimeoutSettings{
 		MaxIdleConnections: 10,
 		ResponseTimeout:    50 * time.Second,
 		RequestTimeout:     50 * time.Second,
@@ -61,6 +61,7 @@ func main() {
 
 func GetExample() {
 	response, err := client.Get("https://api.github.com", nil)
+	client.DisableTimeouts(true)
 	client.MakeHeaders()
 	if err != nil {
 		panic(err)
