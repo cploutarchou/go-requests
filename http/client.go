@@ -20,12 +20,15 @@ type goHTTPClient struct {
 	client  *http.Client
 	Config  *Config
 }
+
+// Config is a struct that holds the configuration for the http client
+//
+//	RequestTimeout: the timeout for the request
+//	ResponseTimeout: the timeout for the response
+//	MaxIdleConnections: the maximum number of idle connections
 type Config struct {
-	// Timeout is the timeout for HTTP response in nanoseconds
-	ResponseTimeout time.Duration
-	// Timeout is the timeout for HTTP requests in nanoseconds
-	RequestTimeout time.Duration
-	// MaxIdleConnections is the maximum number of connections in idle
+	ResponseTimeout    time.Duration
+	RequestTimeout     time.Duration
 	MaxIdleConnections int
 }
 
@@ -42,6 +45,9 @@ type GoHTTPClient interface {
 	SetRequestTimeout(time.Duration)
 	SetResponseTimeout(time.Duration)
 	SetMaxIdleConnections(int)
+	getRequestTimeout() time.Duration
+	getResponseTimeout() time.Duration
+	getMaxIdleConnections() int
 	SetConfig(*Config)
 }
 
@@ -61,6 +67,15 @@ func NewClient() GoHTTPClient {
 	}
 }
 
+// SetHeaders sets the headers for the client
+//
+//	 headers: the headers to be set
+//
+//		Example:
+//			headers := make(http.Header)
+//			headers.Set("Content-Type", "application/json")
+//			headers.Set("Authorization", "Bearer <token>")
+//			client.SetHeaders(headers)
 func (c *goHTTPClient) SetHeaders(h http.Header) {
 	c.Headers = h
 }
@@ -144,11 +159,31 @@ func (c *goHTTPClient) SetRequestTimeout(timeout time.Duration) {
 func (c *goHTTPClient) SetResponseTimeout(timeout time.Duration) {
 	c.Config.ResponseTimeout = timeout
 }
-func (c *goHTTPClient) SetMaxIdleConnections(maxIdleConnections int) {
-
-	c.Config.MaxIdleConnections = maxIdleConnections
+func (c *goHTTPClient) SetMaxIdleConnections(maxConnections int) {
+	c.Config.MaxIdleConnections = maxConnections
 }
 
 func (c *goHTTPClient) SetConfig(config *Config) {
 	c.Config = config
+}
+
+func (c *goHTTPClient) getRequestTimeout() time.Duration {
+	if c.Config.RequestTimeout == 0 {
+		return defaultRequestTimeout
+	}
+	return c.Config.RequestTimeout
+}
+
+func (c *goHTTPClient) getResponseTimeout() time.Duration {
+	if c.Config.ResponseTimeout == 0 {
+		return defaultResponseTimeout
+	}
+	return c.Config.ResponseTimeout
+}
+
+func (c *goHTTPClient) getMaxIdleConnections() int {
+	if c.Config.MaxIdleConnections == 0 {
+		return defaultMaxIdleConnectionsPerHost
+	}
+	return c.Config.MaxIdleConnections
 }
