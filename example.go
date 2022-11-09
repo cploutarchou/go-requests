@@ -8,18 +8,19 @@ import (
 	"github.com/cploutarchou/go-http/http"
 )
 
-var client http.GoHTTPClient
+var client http.Client
 
-func getGithubClientWithOutConfig() http.GoHTTPClient {
-	_client := http.NewClient()
+func getGithubClientWithOutConfig() http.Client {
+	builder := http.NewBuilder()
+	builder.SetConfig().SetRequestTimeout().SetResponseTimeout().Build()
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Add("Accept", "application/json")
 	_client.SetHeaders(commonHeaders)
 	return _client
 }
 
-func getGithubClientWithConfig() http.GoHTTPClient {
-	_client := http.NewClient()
+func getGithubClientWithConfig() http.Client {
+	_client := http.NewBuilder()
 	_client.SetConfig(&http.TimeoutSettings{
 		MaxIdleConnections: 10,
 		ResponseTimeout:    50 * time.Second,
@@ -28,8 +29,8 @@ func getGithubClientWithConfig() http.GoHTTPClient {
 	return _client
 }
 
-func getGithubClientBySetters() http.GoHTTPClient {
-	_client := http.NewClient()
+func getGithubClientBySetters() http.Client {
+	_client := http.NewBuilder()
 	_client.SetRequestTimeout(50 * time.Second)
 	_client.SetResponseTimeout(50 * time.Second)
 	_client.SetMaxIdleConnections(10)
