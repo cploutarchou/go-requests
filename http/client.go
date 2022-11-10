@@ -12,7 +12,7 @@ type Method string
 // it is used to make http requests
 type goHTTPClient struct {
 	client  *http.Client
-	header  http.Header
+	header  Headers
 	timeout Timeout
 }
 

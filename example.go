@@ -8,15 +8,14 @@ import (
 	"github.com/cploutarchou/go-http/http"
 )
 
-var client http.Client
-
 func getGithubClientWithOutConfig() http.Client {
 	builder := http.NewBuilder()
-	builder.SetRequestTimeout(50 * time.Second).SetResponseTimeout(50 * time.Second).SetMaxIdleConnections(10).Build()
-	commonHeaders := _client.MakeHeaders()
-	commonHeaders.Add("Accept", "application/json")
-	_client.SetHeaders(commonHeaders)
-	return _client
+	builder.SetRequestTimeout(50 * time.Second).SetResponseTimeout(50 * time.Second).SetMaxIdleConnections(10)
+	http.Headers().SetHeaders(map[string][]string{
+		"Content-Type": {"application/json"},
+	}
+	builder.SetHeaders().
+	return builder.Build()
 }
 
 func getGithubClientWithConfig() http.Client {

@@ -40,7 +40,6 @@ type Timeout interface {
 	GetRequestTimeout() time.Duration
 	GetResponseTimeout() time.Duration
 	Disable(bool) Timeout
-	Build()
 }
 
 // GetRequestTimeout returns the request timeout
