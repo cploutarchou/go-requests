@@ -4,26 +4,16 @@ import (
 	"encoding/json"
 	"net"
 	"net/http"
-	"time"
 )
 
 type Method string
 
-const (
-	// defaultMaxIdleConnectionsPerHost is the default value for MaxIdleConnectionsPerHost
-	defaultMaxIdleConnectionsPerHost = 10
-	// defaultResponseTimeout is the default value for ResponseTimeout
-	defaultResponseTimeout = 5 * time.Second
-	// defaultRequestTimeout is the default value for RequestTimeout
-	defaultRequestTimeout = 5 * time.Second
-)
-
 // goHTTPClient is the default implementation of the Client interface
 // it is used to make http requests
 type goHTTPClient struct {
-	client          *http.Client
-	header          http.Header
-	timeoutSettings TimeoutSettings
+	client  *http.Client
+	header  http.Header
+	timeout Timeout
 }
 
 // Client is an interface for http client
@@ -226,12 +216,12 @@ func (c *goHTTPClient) getClient() *http.Client {
 		return c.client
 	}
 	client := http.Client{
-		Timeout: c.GetRequestTimeout(),
+		Timeout: c.timeout.GetRequestTimeout(),
 		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   c.GetMaxIdleConnections(),
-			ResponseHeaderTimeout: c.GetResponseTimeout(),
+			MaxIdleConnsPerHost:   c.timeout.GetMaxIdleConnections(),
+			ResponseHeaderTimeout: c.timeout.GetResponseTimeout(),
 			DialContext: (&net.Dialer{
-				Timeout: c.GetRequestTimeout(),
+				Timeout: c.timeout.GetRequestTimeout(),
 			}).DialContext,
 		},
 	}

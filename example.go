@@ -12,7 +12,7 @@ var client http.Client
 
 func getGithubClientWithOutConfig() http.Client {
 	builder := http.NewBuilder()
-	builder.SetConfig().SetRequestTimeout().SetResponseTimeout().Build()
+	builder.SetRequestTimeout(50 * time.Second).SetResponseTimeout(50 * time.Second).SetMaxIdleConnections(10).Build()
 	commonHeaders := _client.MakeHeaders()
 	commonHeaders.Add("Accept", "application/json")
 	_client.SetHeaders(commonHeaders)
