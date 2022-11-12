@@ -89,3 +89,31 @@ func (c timeoutImpl) Disable(disable bool) Timeout {
 	c.DisableTimeouts = disable
 	return c
 }
+
+// SetRequestTimeout sets the request timeout
+// if the value is 0, the request will not timeout.
+//
+// if the value is negative, the request will timeout immediately.
+//
+// if the value is positive, the request will timeout after the specified duration.
+//
+// if the value is not set, the request will timeout after 5 seconds.
+//
+// if the value is not set and the DisableTimeouts is set to true, the request will not timeout.
+//
+//	Example:
+//		client.SetRequestTimeout(10 * time.Second)
+func (c timeoutImpl) SetRequestTimeout(timeout time.Duration) Timeout {
+	c.RequestTimeout = timeout
+	return c
+}
+
+func (c timeoutImpl) SetResponseTimeout(timeout time.Duration) Timeout {
+	c.ResponseTimeout = timeout
+	return c
+}
+
+func (c timeoutImpl) SetMaxIdleConnections(maxConnections int) Timeout {
+	c.MaxIdleConnections = maxConnections
+	return c
+}
