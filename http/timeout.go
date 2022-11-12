@@ -23,7 +23,7 @@ type timeoutImpl struct {
 	DisableTimeouts    bool
 }
 
-func newTimeoutImpl() *timeoutImpl {
+func newTimeouts() *timeoutImpl {
 	return &timeoutImpl{
 		ResponseTimeout:    defaultResponseTimeout,
 		RequestTimeout:     defaultRequestTimeout,
@@ -93,11 +93,11 @@ func (c timeoutImpl) Disable(disable bool) Timeout {
 // SetRequestTimeout sets the request timeout
 // if the value is 0, the request will not timeout.
 //
-// if the value is negative, the request will timeout immediately.
+// if the value is negative, the request will time out immediately.
 //
-// if the value is positive, the request will timeout after the specified duration.
+// if the value is positive, the request will time out after the specified duration.
 //
-// if the value is not set, the request will timeout after 5 seconds.
+// if the value is not set, the request will time out after 5 seconds.
 //
 // if the value is not set and the DisableTimeouts is set to true, the request will not timeout.
 //
