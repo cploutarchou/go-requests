@@ -12,7 +12,7 @@ type Method string
 // it is used to make http requests
 type goHTTPClient struct {
 	client  *http.Client
-	header  Headers
+	headers Headers
 	timeout Timeout
 }
 
@@ -146,7 +146,7 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 //		headers := make(http.Header)
 //		headers.Set("Content-Type", "application/json")
 //		headers.Set("Authorization", "Bearer <token>")
-//		client.SetHeaders(headers)
+//		client.Headers(headers)
 //
 // body: the body to be sent with the request
 // returns the response and an error if there is one
