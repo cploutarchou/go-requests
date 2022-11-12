@@ -1,7 +1,6 @@
 package http
 
 import (
-	"net/http"
 	"time"
 )
 
@@ -10,8 +9,13 @@ type builderImpl struct {
 	timeoutSettings Timeout
 }
 
-func (c builderImpl) SetHeaders(header http.Header) Headers {
-	return c.header.SetHeaders(header)
+func (c builderImpl) SetMaxIdleConnections(maxConnections int) Timeout {
+	c.timeoutSettings.SetMaxIdleConnections(maxConnections)
+	return c.timeoutSettings
+}
+
+func (c builderImpl) Headers() Headers {
+	return c.header
 }
 
 func (c builderImpl) GetMaxIdleConnections() int {
@@ -31,36 +35,22 @@ func (c builderImpl) SetResponseTimeout(timeout time.Duration) Timeout {
 type Builder interface {
 	SetRequestTimeout(timeout time.Duration) Timeout
 	SetResponseTimeout(timeout time.Duration) Timeout
-	SetHeaders(http.Header) Headers
+	SetMaxIdleConnections(maxConnections int) Timeout
+	Headers() Headers
 	Build() Client
-}
-
-func (c timeoutImpl) SetRequestTimeout(timeout time.Duration) Timeout {
-	c.RequestTimeout = timeout
-	return c
-}
-
-func (c timeoutImpl) SetResponseTimeout(timeout time.Duration) Timeout {
-	c.ResponseTimeout = timeout
-	return c
-}
-
-func (c timeoutImpl) SetMaxIdleConnections(maxConnections int) Timeout {
-	c.MaxIdleConnections = maxConnections
-	return c
 }
 
 func (c builderImpl) Build() Client {
 	return &goHTTPClient{
 		timeout: c.timeoutSettings,
-		header:  c.header,
+		headers: c.header,
 	}
 }
 
 func NewBuilder() Builder {
 	builder := &builderImpl{
-		timeoutSettings: newTimeoutImpl(),
-		header:          newHeadersImpl(),
+		timeoutSettings: newTimeouts(),
+		header:          NewHeaders(),
 	}
 	return builder
 }
