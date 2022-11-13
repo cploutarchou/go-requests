@@ -5,13 +5,13 @@ import (
 )
 
 type builderImpl struct {
-	header          Headers
-	timeoutSettings Timeout
+	header  Headers
+	Timeout Timeout
 }
 
 func (c builderImpl) SetMaxIdleConnections(maxConnections int) Timeout {
-	c.timeoutSettings.SetMaxIdleConnections(maxConnections)
-	return c.timeoutSettings
+	c.Timeout.SetMaxIdleConnections(maxConnections)
+	return c.Timeout
 }
 
 func (c builderImpl) Headers() Headers {
@@ -19,17 +19,17 @@ func (c builderImpl) Headers() Headers {
 }
 
 func (c builderImpl) GetMaxIdleConnections() int {
-	return c.timeoutSettings.GetMaxIdleConnections()
+	return c.Timeout.GetMaxIdleConnections()
 }
 
 func (c builderImpl) SetRequestTimeout(timeout time.Duration) Timeout {
-	c.timeoutSettings.SetRequestTimeout(timeout)
-	return c.timeoutSettings
+	c.Timeout.SetRequestTimeout(timeout)
+	return c.Timeout
 }
 
 func (c builderImpl) SetResponseTimeout(timeout time.Duration) Timeout {
-	c.timeoutSettings.SetResponseTimeout(timeout)
-	return c.timeoutSettings
+	c.Timeout.SetResponseTimeout(timeout)
+	return c.Timeout
 }
 
 type Builder interface {
@@ -42,15 +42,15 @@ type Builder interface {
 
 func (c builderImpl) Build() Client {
 	return &goHTTPClient{
-		timeout: c.timeoutSettings,
-		headers: c.header,
+		Timeout: c.Timeout,
+		Headers: c.header,
 	}
 }
 
 func NewBuilder() Builder {
 	builder := &builderImpl{
-		timeoutSettings: newTimeouts(),
-		header:          NewHeaders(),
+		Timeout: newTimeouts(),
+		header:  NewHeaders(),
 	}
 	return builder
 }

@@ -6,18 +6,17 @@ import (
 
 func TestGetHeaders(t *testing.T) {
 	// Initialization
-	_client := goHTTPClient{}
-	commonHeaders := _client.MakeHeaders()
-	commonHeaders.Set("Content-Type", "application/json")
-	commonHeaders.Set("User-Agent", "the-best-http-goHttpClient")
-	_client.Headers = commonHeaders
-	// Execution
-	requestHeaders := _client.MakeHeaders()
-	requestHeaders.Set("X-Request-ID", "ABC123")
-	headers := _client.getHeaders(requestHeaders)
+	builder := NewBuilder()
+	builder.Headers().
+		SetContentType("application/json").
+		SetAcceptEncoding("gzip").
+		SetAcceptCharset("utf-8").
+		SetCustom("User-Agent", "the-best-http-goHttpClient").
+		SetCustom("X-Request-ID", "ABC123")
+	headers := builder.Headers()
 	// Validation
-	if len(headers) != 3 {
-		t.Errorf("expected 3 headers. Provided only %d", len(headers))
+	if headers.Len() != 5 {
+		t.Errorf("expected 5 Headers. Provided only %d", headers.Len())
 	}
 	if headers.Get("X-Request-ID") != "ABC123" {
 		t.Errorf("expected 'X-Request-ID' header. Provided %s", headers.Get("X-Request-ID"))
@@ -25,9 +24,15 @@ func TestGetHeaders(t *testing.T) {
 	if headers.Get("Content-Type") != "application/json" {
 		t.Errorf("expected 'Content-Type' header. Provided %s", headers.Get("Content-Type"))
 	}
-
 	if headers.Get("User-Agent") != "the-best-http-goHttpClient" {
 		t.Errorf("expected 'User-Agent' header. Provided %s", headers.Get("User-Agent"))
+	}
+	if headers.Get("Accept-Encoding") != "gzip" {
+		t.Errorf("expected 'Accept-Encoding' header. Provided %s", headers.Get("Accept-Encoding"))
+	}
+
+	if headers.Get("Accept-Charset") != "utf-8" {
+		t.Errorf("expected 'Accept-Charset' header. Provided %s", headers.Get("Accept-Charset"))
 	}
 }
 

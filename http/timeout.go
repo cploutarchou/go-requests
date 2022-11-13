@@ -13,8 +13,8 @@ const (
 
 // timeoutImpl is a struct that holds the configuration for the http client
 //
-//	RequestTimeout: the timeout for the request
-//	ResponseTimeout: the timeout for the response
+//	RequestTimeout: the Timeout for the request
+//	ResponseTimeout: the Timeout for the response
 //	MaxIdleConnections: the maximum number of idle connections
 type timeoutImpl struct {
 	ResponseTimeout    time.Duration
@@ -42,8 +42,8 @@ type Timeout interface {
 	Disable(bool) Timeout
 }
 
-// GetRequestTimeout returns the request timeout
-// if the request timeout is not set, it returns the default request timeout.
+// GetRequestTimeout returns the request Timeout
+// if the request Timeout is not set, it returns the default request Timeout.
 func (c timeoutImpl) GetRequestTimeout() time.Duration {
 	if c.RequestTimeout != defaultRequestTimeout {
 		return c.RequestTimeout
@@ -54,8 +54,8 @@ func (c timeoutImpl) GetRequestTimeout() time.Duration {
 	return defaultRequestTimeout
 }
 
-// GetResponseTimeout returns the response timeout
-// if the request timeout is not set, it returns the default response timeout
+// GetResponseTimeout returns the response Timeout
+// if the request Timeout is not set, it returns the default response Timeout
 func (c timeoutImpl) GetResponseTimeout() time.Duration {
 	if c.ResponseTimeout != defaultResponseTimeout {
 		return c.ResponseTimeout
@@ -90,8 +90,8 @@ func (c timeoutImpl) Disable(disable bool) Timeout {
 	return c
 }
 
-// SetRequestTimeout sets the request timeout
-// if the value is 0, the request will not timeout.
+// SetRequestTimeout sets the request Timeout
+// if the value is 0, the request will not Timeout.
 //
 // if the value is negative, the request will time out immediately.
 //
@@ -99,7 +99,7 @@ func (c timeoutImpl) Disable(disable bool) Timeout {
 //
 // if the value is not set, the request will time out after 5 seconds.
 //
-// if the value is not set and the DisableTimeouts is set to true, the request will not timeout.
+// if the value is not set and the DisableTimeouts is set to true, the request will not Timeout.
 //
 //	Example:
 //		client.SetRequestTimeout(10 * time.Second)

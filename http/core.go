@@ -27,10 +27,10 @@ func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, er
 // It returns the response and an error if something goes wrong
 // It is private because it is only used by the public methods
 //
-//	func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
+//	func (c *goHTTPClient) do(method Method, url string, Headers http.Header, body interface{}) (*http.Response, error) {
 //		var err error
 //		var req *http.Request
-//		availableHeaders := c.getHeaders(headers)
+//		availableHeaders := c.getHeaders(Headers)
 //		requestBody, err := c.getBody(availableHeaders.Get("Content-Type"), body)
 //		if err != nil {
 //			return nil, err
@@ -44,7 +44,7 @@ func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, er
 //		if err != nil {
 //			return nil, errors.New("unable to create request")
 //		}
-//		// Set all set headers to the http request
+//		// Set all set Headers to the http request
 //		req.Header = availableHeaders
 //		// Return the response
 //		return c.client.Do(req)
@@ -66,23 +66,23 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	if err != nil {
 		return nil, errors.New("unable to create request")
 	}
-	// Set all set headers to the http request
+	// Set all set Headers to the http request
 	req.Header = availableHeaders
 	// Return the response
 	c.client = c.getClient()
 	return c.client.Do(req)
 }
 
-// getHeaders returns the headers that are set
+// getHeaders returns the Headers that are set
 func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 	res := make(http.Header)
-	// Set common headers to the request
-	for header, value := range c.headers.GetAll() {
+	// Set common Headers to the request
+	for header, value := range c.Headers.GetAll() {
 		if len(value) > 0 {
 			res.Set(header, value[0])
 		}
 	}
-	// Set headers to the request
+	// Set Headers to the request
 	for header, value := range headers {
 		if len(value) > 0 {
 			res.Set(header, value[0])
