@@ -31,7 +31,8 @@ const (
 )
 
 type Headers interface {
-
+	// defaultHeaders returns the default headers for the request.
+	defaultHeaders()
 	// Set sets a header to the header
 	Set(key, value string) Headers
 
@@ -89,7 +90,7 @@ type Headers interface {
 	// SetAge sets the age to the header
 	SetAge(age string) Headers
 
-	// SetAllow sets the allow to the header
+	// SetAllow sets to allow to the header
 	SetAllow(allow string) Headers
 
 	// Get returns the value of the header
@@ -127,132 +128,132 @@ type headerImpl struct {
 	values map[string]string
 }
 
-func (h headerImpl) Set(key, value string) Headers {
+func (h *headerImpl) Set(key, value string) Headers {
 	h.values[key] = value
 	return h
 }
 
-func (h headerImpl) SetContentType(contentType string) Headers {
+func (h *headerImpl) SetContentType(contentType string) Headers {
 	h.values[string(HeaderTypeContentType)] = contentType
 	return h
 }
 
-func (h headerImpl) SetContentLength(contentLength int) Headers {
+func (h *headerImpl) SetContentLength(contentLength int) Headers {
 	h.values[string(HeaderTypeContentLength)] = strconv.Itoa(contentLength)
 	return h
 }
 
-func (h headerImpl) SetContentDisposition(contentDisposition string) Headers {
+func (h *headerImpl) SetContentDisposition(contentDisposition string) Headers {
 	h.values[string(HeaderTypeContentDisposition)] = contentDisposition
 	return h
 }
 
-func (h headerImpl) SetContentEncoding(contentEncoding string) Headers {
+func (h *headerImpl) SetContentEncoding(contentEncoding string) Headers {
 	h.values[string(HeaderTypeContentEncoding)] = contentEncoding
 	return h
 }
 
-func (h headerImpl) SetContentLanguage(contentLanguage string) Headers {
+func (h *headerImpl) SetContentLanguage(contentLanguage string) Headers {
 	h.values[string(HeaderTypeContentLanguage)] = contentLanguage
 	return h
 }
 
-func (h headerImpl) SetContentLocation(contentLocation string) Headers {
+func (h *headerImpl) SetContentLocation(contentLocation string) Headers {
 	h.values[string(HeaderTypeContentLocation)] = contentLocation
 	return h
 }
 
-func (h headerImpl) SetContentMD5(contentMD5 string) Headers {
+func (h *headerImpl) SetContentMD5(contentMD5 string) Headers {
 	h.values[string(HeaderTypeContentMD5)] = contentMD5
 	return h
 }
 
-func (h headerImpl) SetContentRange(contentRange string) Headers {
+func (h *headerImpl) SetContentRange(contentRange string) Headers {
 	h.values[string(HeaderTypeContentRange)] = contentRange
 	return h
 }
 
-func (h headerImpl) SetCookie(cookie string) Headers {
+func (h *headerImpl) SetCookie(cookie string) Headers {
 	h.values[string(HeaderTypeCookie)] = cookie
 	return h
 }
 
-func (h headerImpl) SetDate(date string) Headers {
+func (h *headerImpl) SetDate(date string) Headers {
 	h.values[string(HeaderTypeDate)] = date
 	return h
 }
 
-func (h headerImpl) SetETag(etag string) Headers {
+func (h *headerImpl) SetETag(etag string) Headers {
 	h.values[string(HeaderTypeETag)] = etag
 	return h
 }
 
-func (h headerImpl) SetExpires(expires string) Headers {
+func (h *headerImpl) SetExpires(expires string) Headers {
 	h.values[string(HeaderTypeExpires)] = expires
 	return h
 }
 
-func (h headerImpl) SetAccept(accept string) Headers {
+func (h *headerImpl) SetAccept(accept string) Headers {
 	h.values[string(HeaderTypeAccept)] = accept
 	return h
 }
 
-func (h headerImpl) SetAcceptCharset(acceptCharset string) Headers {
+func (h *headerImpl) SetAcceptCharset(acceptCharset string) Headers {
 	h.values[string(HeaderTypeAcceptCharset)] = acceptCharset
 	return h
 }
 
-func (h headerImpl) SetAcceptEncoding(acceptEncoding string) Headers {
+func (h *headerImpl) SetAcceptEncoding(acceptEncoding string) Headers {
 	h.values[string(HeaderTypeAcceptEncoding)] = acceptEncoding
 	return h
 }
 
-func (h headerImpl) SetAcceptLanguage(acceptLanguage string) Headers {
+func (h *headerImpl) SetAcceptLanguage(acceptLanguage string) Headers {
 	h.values[string(HeaderTypeAcceptLanguage)] = acceptLanguage
 	return h
 }
 
-func (h headerImpl) SetAcceptRanges(acceptRanges string) Headers {
+func (h *headerImpl) SetAcceptRanges(acceptRanges string) Headers {
 	h.values[string(HeaderTypeAcceptRanges)] = acceptRanges
 	return h
 }
 
-func (h headerImpl) SetAge(age string) Headers {
+func (h *headerImpl) SetAge(age string) Headers {
 	h.values[string(HeaderTypeAge)] = age
 	return h
 }
 
-func (h headerImpl) SetAllow(allow string) Headers {
+func (h *headerImpl) SetAllow(allow string) Headers {
 	h.values[string(HeaderTypeAllow)] = allow
 	return h
 }
 
-func (h headerImpl) Get(key string) string {
+func (h *headerImpl) Get(key string) string {
 	return h.values[key]
 }
 
-func (h headerImpl) Del(key string) Headers {
+func (h *headerImpl) Del(key string) Headers {
 	delete(h.values, key)
 	return h
 }
 
-func (h headerImpl) Clone() Headers {
+func (h *headerImpl) Clone() Headers {
 	clone := make(map[string]string)
 	for k, v := range h.values {
 		clone[k] = v
 	}
-	return headerImpl{values: clone}
+	return &headerImpl{values: clone}
 }
 
-func (h headerImpl) IsEmpty() bool {
+func (h *headerImpl) IsEmpty() bool {
 	return len(h.values) == 0
 }
 
-func (h headerImpl) IsSet() bool {
+func (h *headerImpl) IsSet() bool {
 	return !h.IsEmpty()
 }
 
-func (h headerImpl) String() string {
+func (h *headerImpl) String() string {
 	var buffer bytes.Buffer
 	for k, v := range h.values {
 		buffer.WriteString(fmt.Sprintf("%s: %s", k, v))
@@ -260,11 +261,11 @@ func (h headerImpl) String() string {
 	return buffer.String()
 }
 
-func (h headerImpl) Values() map[string]string {
+func (h *headerImpl) Values() map[string]string {
 	return h.values
 }
 
-func (h headerImpl) Keys() []string {
+func (h *headerImpl) Keys() []string {
 	var keys []string
 	for k := range h.values {
 		keys = append(keys, k)
@@ -272,11 +273,11 @@ func (h headerImpl) Keys() []string {
 	return keys
 }
 
-func (h headerImpl) Len() int {
+func (h *headerImpl) Len() int {
 	return len(h.values)
 }
 
-func (h headerImpl) GetAll() map[string][]string {
+func (h *headerImpl) GetAll() map[string][]string {
 	all := make(map[string][]string)
 	for k, v := range h.values {
 		all[k] = []string{v}
@@ -285,8 +286,22 @@ func (h headerImpl) GetAll() map[string][]string {
 
 }
 
+// defaultHeaders returns a new instance of the default headers
+func (h *headerImpl) defaultHeaders() {
+	h.values[string(HeaderTypeContentType)] = "application/json"
+	h.values[string(HeaderTypeAccept)] = "application/json"
+	h.values[string(HeaderTypeAcceptCharset)] = "utf-8"
+	h.values[string(HeaderTypeAcceptEncoding)] = "gzip, deflate"
+	h.values[string(HeaderTypeAcceptLanguage)] = "en-US,en;q=0.9"
+	h.values[string(HeaderTypeAcceptRanges)] = "bytes"
+	h.values[string(HeaderTypeAllow)] = "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE"
+	h.values[string(HeaderTypeContentEncoding)] = "gzip"
+	h.values[string(HeaderTypeContentLanguage)] = "en-US"
+}
+
 func NewHeaders() Headers {
-	return &headerImpl{
-		values: make(map[string]string),
-	}
+	theDefaultHeaders := &headerImpl{values: make(map[string]string)}
+	theDefaultHeaders.defaultHeaders()
+	return theDefaultHeaders
+
 }
