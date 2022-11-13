@@ -1,6 +1,7 @@
 package http
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -39,6 +40,7 @@ func TestGetHeaders(t *testing.T) {
 func TestGetBody(t *testing.T) {
 	// Initialization
 	_client := goHTTPClient{}
+	// Validation
 	t.Run("noBody", func(t *testing.T) {
 		// Execution
 		requestBody, err := _client.getBody("", nil)
@@ -88,4 +90,77 @@ func TestGetBody(t *testing.T) {
 			t.Errorf("invalid request body. Provided %s", string(requestBody))
 		}
 	})
+}
+
+func Test_goHTTPClient_interfaceToJSONBytes(t *testing.T) {
+	type args struct {
+		data interface{}
+	}
+	var tests []struct {
+		name    string
+		c       *goHTTPClient
+		args    args
+		want    []byte
+		wantErr bool
+	}
+	tests = append(tests, struct {
+		name    string
+		c       *goHTTPClient
+		args    args
+		want    []byte
+		wantErr bool
+	}{
+		name: "string",
+		c:    &goHTTPClient{},
+		args: args{
+			data: "Hello World",
+		},
+		want:    []byte(`"Hello World"`),
+		wantErr: false,
+	})
+	tests = append(tests, struct {
+		name string
+		c    *goHTTPClient
+		args args
+		want []byte
+
+		wantErr bool
+	}{
+		name: "int",
+		c:    &goHTTPClient{},
+		args: args{
+			data: 123,
+		},
+		want:    []byte(`123`),
+		wantErr: false,
+	})
+	tests = append(tests, struct {
+		name string
+		c    *goHTTPClient
+		args args
+		want []byte
+
+		wantErr bool
+	}{
+		name: "float",
+		c:    &goHTTPClient{},
+		args: args{
+			data: 123.45,
+		},
+		want:    []byte(`123.45`),
+		wantErr: false,
+	})
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.c.interfaceToJSONBytes(tt.args.data)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("goHTTPClient.interfaceToJSONBytes() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("goHTTPClient.interfaceToJSONBytes() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
