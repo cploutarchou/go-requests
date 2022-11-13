@@ -96,61 +96,23 @@ func Test_goHTTPClient_interfaceToJSONBytes(t *testing.T) {
 	type args struct {
 		data interface{}
 	}
-	var tests []struct {
+	tests := []struct {
 		name    string
 		c       *goHTTPClient
 		args    args
 		want    []byte
 		wantErr bool
+	}{
+		{name: "nil", args: args{data: nil}, want: []byte("null"), wantErr: false},
+		{name: "string", args: args{data: "Hello World"}, want: []byte(`"Hello World"`), wantErr: false},
+		{name: "int", args: args{data: 123}, want: []byte("123"), wantErr: false},
+		{name: "float", args: args{data: 123.456}, want: []byte("123.456"), wantErr: false},
+		{name: "bool", args: args{data: true}, want: []byte("true"), wantErr: false},
+		{name: "array", args: args{data: []string{"Hello", "World"}}, want: []byte(`["Hello","World"]`), wantErr: false},
+		{name: "map", args: args{data: map[string]string{"Hello": "World"}}, want: []byte(`{"Hello":"World"}`), wantErr: false},
+		{name: "struct", args: args{data: struct{}{}}, want: []byte("{}"), wantErr: false},
+		{name: "struct", args: args{data: struct{ Hello string }{Hello: "World"}}, want: []byte(`{"Hello":"World"}`), wantErr: false},
 	}
-	tests = append(tests, struct {
-		name    string
-		c       *goHTTPClient
-		args    args
-		want    []byte
-		wantErr bool
-	}{
-		name: "string",
-		c:    &goHTTPClient{},
-		args: args{
-			data: "Hello World",
-		},
-		want:    []byte(`"Hello World"`),
-		wantErr: false,
-	})
-	tests = append(tests, struct {
-		name string
-		c    *goHTTPClient
-		args args
-		want []byte
-
-		wantErr bool
-	}{
-		name: "int",
-		c:    &goHTTPClient{},
-		args: args{
-			data: 123,
-		},
-		want:    []byte(`123`),
-		wantErr: false,
-	})
-	tests = append(tests, struct {
-		name string
-		c    *goHTTPClient
-		args args
-		want []byte
-
-		wantErr bool
-	}{
-		name: "float",
-		c:    &goHTTPClient{},
-		args: args{
-			data: 123.45,
-		},
-		want:    []byte(`123.45`),
-		wantErr: false,
-	})
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.c.interfaceToJSONBytes(tt.args.data)
@@ -160,6 +122,36 @@ func Test_goHTTPClient_interfaceToJSONBytes(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("goHTTPClient.interfaceToJSONBytes() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_goHTTPClient_interfaceToXMLBytes(t *testing.T) {
+	type args struct {
+		data interface{}
+	}
+	tests := []struct {
+		name    string
+		c       *goHTTPClient
+		args    args
+		want    []byte
+		wantErr bool
+	}{
+		{name: "string", c: &goHTTPClient{}, args: args{data: "Hello World"}, want: []byte(`<string>Hello World</string>`), wantErr: false},
+		{name: "int", c: &goHTTPClient{}, args: args{data: 123}, want: []byte(`<int>123</int>`), wantErr: false},
+		{name: "bool", c: &goHTTPClient{}, args: args{data: true}, want: []byte(`<bool>true</bool>`), wantErr: false},
+		{name: "array", c: &goHTTPClient{}, args: args{data: []string{"Hello", "World"}}, want: []byte(`<string>Hello</string><string>World</string>`), wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.c.interfaceToXMLBytes(tt.args.data)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("goHTTPClient.interfaceToXMLBytes() has : %v,  error = %v, wantErr %v", err, string(got), tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("goHTTPClient.interfaceToXMLBytes() has : %v,  error = %v, wantErr %v", err, string(got), tt.wantErr)
 			}
 		})
 	}
