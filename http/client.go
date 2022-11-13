@@ -12,8 +12,8 @@ type Method string
 // it is used to make http requests
 type goHTTPClient struct {
 	client  *http.Client
-	headers Headers
-	timeout Timeout
+	Headers Headers
+	Timeout Timeout
 }
 
 // Client is an interface for http client
@@ -28,7 +28,7 @@ type Client interface {
 
 // Get sends a GET request to the specified URL
 // url: the url to send the request to
-// headers: the headers to be sent with the request
+// Headers: the Headers to be sent with the request
 // returns the response and an error if there is one
 // returns an error if the request fails
 //
@@ -54,7 +54,7 @@ func (c *goHTTPClient) Get(url string, headers http.Header) (*http.Response, err
 // Post sends a POST request to the specified URL
 // url: the url to send the request to
 //
-//	headers: the headers to be sent with the request
+//	Headers: the Headers to be sent with the request
 //	body: the body to be sent with the request
 //	returns the response and an error if there is one
 //	returns an error if the request fails
@@ -83,7 +83,7 @@ func (c *goHTTPClient) Post(url string, headers http.Header, body interface{}) (
 
 // Put sends a PUT request to the specified URL
 // url: the url to send the request to
-// headers: the headers to be sent with the request
+// Headers: the Headers to be sent with the request
 // body: the body to be sent with the request
 // returns the response and an error if there is one
 // returns an error if the request fails
@@ -113,7 +113,7 @@ func (c *goHTTPClient) Put(url string, headers http.Header, body interface{}) (*
 
 // Delete sends a DELETE request to the specified URL
 // url: the url to send the request to
-// headers: the headers to be sent with the request
+// Headers: the Headers to be sent with the request
 //
 //	Example:
 //	response, err := client.Delete("https://www.google.com", nil, nil)
@@ -140,13 +140,13 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 
 // Patch sends a PATCH request to the specified URL
 // url: the url to send the request to
-// headers: the headers to be sent with the request
+// Headers: the Headers to be sent with the request
 //
 //	Example:
-//		headers := make(http.Header)
-//		headers.Set("Content-Type", "application/json")
-//		headers.Set("Authorization", "Bearer <token>")
-//		client.Headers(headers)
+//		Headers := make(http.Header)
+//		Headers.Set("Content-Type", "application/json")
+//		Headers.Set("Authorization", "Bearer <token>")
+//		client.Headers(Headers)
 //
 // body: the body to be sent with the request
 // returns the response and an error if there is one
@@ -161,7 +161,7 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 //				FirstName: "Christos",
 //				LastName: "Ploutarchou",
 //			}
-//			response, err := client.Patch("https://example.com", headers, user)
+//			response, err := client.Patch("https://example.com", Headers, user)
 //			if err != nil {
 //				log.Fatal(err)
 //			}
@@ -185,7 +185,7 @@ func (c *goHTTPClient) Patch(url string, headers http.Header, body interface{}) 
 
 // Head sends a HEAD request to the specified URL
 // url: the url to send the request to
-// headers: the headers to be sent with the request
+// Headers: the Headers to be sent with the request
 // body: the body to be sent with the request
 // returns the response and an error if there is one
 // returns an error if the request fails
@@ -216,12 +216,12 @@ func (c *goHTTPClient) getClient() *http.Client {
 		return c.client
 	}
 	client := http.Client{
-		Timeout: c.timeout.GetRequestTimeout(),
+		Timeout: c.Timeout.GetRequestTimeout(),
 		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   c.timeout.GetMaxIdleConnections(),
-			ResponseHeaderTimeout: c.timeout.GetResponseTimeout(),
+			MaxIdleConnsPerHost:   c.Timeout.GetMaxIdleConnections(),
+			ResponseHeaderTimeout: c.Timeout.GetResponseTimeout(),
 			DialContext: (&net.Dialer{
-				Timeout: c.timeout.GetRequestTimeout(),
+				Timeout: c.Timeout.GetRequestTimeout(),
 			}).DialContext,
 		},
 	}

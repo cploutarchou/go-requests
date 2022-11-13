@@ -31,8 +31,6 @@ const (
 )
 
 type Headers interface {
-	// defaultHeaders returns the default headers for the request.
-	defaultHeaders()
 	// Set sets a header to the header
 	Set(key, value string) Headers
 
@@ -93,6 +91,9 @@ type Headers interface {
 	// SetAllow sets to allow to the header
 	SetAllow(allow string) Headers
 
+	// SetCustom sets a custom header to the header
+	SetCustom(key, value string) Headers
+
 	// Get returns the value of the header
 	Get(key string) string
 
@@ -120,7 +121,7 @@ type Headers interface {
 	// Len returns the length of the header
 	Len() int
 
-	//GetAll returns all headers with key and value
+	// GetAll returns all Headers with key and value
 	GetAll() map[string][]string
 }
 
@@ -228,6 +229,10 @@ func (h *headerImpl) SetAllow(allow string) Headers {
 	return h
 }
 
+func (h *headerImpl) SetCustom(key, value string) Headers {
+	h.values[key] = value
+	return h
+}
 func (h *headerImpl) Get(key string) string {
 	return h.values[key]
 }
@@ -283,25 +288,7 @@ func (h *headerImpl) GetAll() map[string][]string {
 		all[k] = []string{v}
 	}
 	return all
-
 }
-
-// defaultHeaders returns a new instance of the default headers
-func (h *headerImpl) defaultHeaders() {
-	h.values[string(HeaderTypeContentType)] = "application/json"
-	h.values[string(HeaderTypeAccept)] = "application/json"
-	h.values[string(HeaderTypeAcceptCharset)] = "utf-8"
-	h.values[string(HeaderTypeAcceptEncoding)] = "gzip, deflate"
-	h.values[string(HeaderTypeAcceptLanguage)] = "en-US,en;q=0.9"
-	h.values[string(HeaderTypeAcceptRanges)] = "bytes"
-	h.values[string(HeaderTypeAllow)] = "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE"
-	h.values[string(HeaderTypeContentEncoding)] = "gzip"
-	h.values[string(HeaderTypeContentLanguage)] = "en-US"
-}
-
 func NewHeaders() Headers {
-	theDefaultHeaders := &headerImpl{values: make(map[string]string)}
-	theDefaultHeaders.defaultHeaders()
-	return theDefaultHeaders
-
+	return &headerImpl{values: make(map[string]string)}
 }
