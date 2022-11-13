@@ -1,6 +1,7 @@
 package http
 
 import (
+	"net/http"
 	"reflect"
 	"testing"
 )
@@ -109,9 +110,6 @@ func Test_goHTTPClient_interfaceToJSONBytes(t *testing.T) {
 		{name: "float", args: args{data: 123.456}, want: []byte("123.456"), wantErr: false},
 		{name: "bool", args: args{data: true}, want: []byte("true"), wantErr: false},
 		{name: "array", args: args{data: []string{"Hello", "World"}}, want: []byte(`["Hello","World"]`), wantErr: false},
-		{name: "map", args: args{data: map[string]string{"Hello": "World"}}, want: []byte(`{"Hello":"World"}`), wantErr: false},
-		{name: "struct", args: args{data: struct{}{}}, want: []byte("{}"), wantErr: false},
-		{name: "struct", args: args{data: struct{ Hello string }{Hello: "World"}}, want: []byte(`{"Hello":"World"}`), wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -152,6 +150,41 @@ func Test_goHTTPClient_interfaceToXMLBytes(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("goHTTPClient.interfaceToXMLBytes() has : %v,  error = %v, wantErr %v", err, string(got), tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_goHTTPClient_getHeaders(t *testing.T) {
+	type fields struct {
+		client  *http.Client
+		Headers Headers
+		Timeout Timeout
+	}
+	type args struct {
+		headers http.Header
+	}
+	builder := NewBuilder()
+	headers := builder.Headers().SetContentType("application/json")
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   http.Header
+	}{
+		{name: "nil", fields: fields{Headers: headers}, args: args{headers: nil}, want: http.Header{"Content-Type": []string{"application/json"}}},
+		{name: "empty", fields: fields{Headers: headers}, args: args{headers: http.Header{}}, want: http.Header{"Content-Type": []string{"application/json"}}},
+		{name: "not empty", fields: fields{Headers: headers}, args: args{headers: http.Header{"Accept": []string{"application/json"}}}, want: http.Header{"Content-Type": []string{"application/json"}, "Accept": []string{"application/json"}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &goHTTPClient{
+				client:  tt.fields.client,
+				Headers: tt.fields.Headers,
+				Timeout: tt.fields.Timeout,
+			}
+			if got := c.getHeaders(tt.args.headers); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("goHTTPClient.getHeaders() = %v, want %v", got, tt.want)
 			}
 		})
 	}

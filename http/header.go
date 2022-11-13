@@ -3,6 +3,7 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"strconv"
 )
 
@@ -123,6 +124,8 @@ type Headers interface {
 
 	// GetAll returns all Headers with key and value
 	GetAll() map[string][]string
+
+	GetAllHttpHeaders() http.Header
 }
 
 type headerImpl struct {
@@ -235,6 +238,14 @@ func (h *headerImpl) SetCustom(key, value string) Headers {
 }
 func (h *headerImpl) Get(key string) string {
 	return h.values[key]
+}
+
+func (h *headerImpl) GetAllHttpHeaders() http.Header {
+	headers := http.Header{}
+	for k, v := range h.values {
+		headers.Set(k, v)
+	}
+	return headers
 }
 
 func (h *headerImpl) Del(key string) Headers {
