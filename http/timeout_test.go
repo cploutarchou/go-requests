@@ -143,3 +143,71 @@ func Test_timeoutImpl_GetMaxIdleConnections(t *testing.T) {
 		})
 	}
 }
+
+func Test_timeoutImpl_Disable(t *testing.T) {
+	type fields struct {
+		ResponseTimeout    time.Duration
+		RequestTimeout     time.Duration
+		MaxIdleConnections int
+		DisableTimeouts    bool
+	}
+	type args struct {
+		disable bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Timeout
+	}{
+		{
+			name: "Test DisableTimeouts Enabled",
+			fields: fields{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    false,
+			},
+			args: args{
+				disable: false,
+			},
+			want: timeoutImpl{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    false,
+			},
+		},
+		{
+			name: "Test DisableTimeouts Disabled",
+			fields: fields{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    true,
+			},
+			args: args{
+				disable: true,
+			},
+			want: timeoutImpl{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    true,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := timeoutImpl{
+				ResponseTimeout:    tt.fields.ResponseTimeout,
+				RequestTimeout:     tt.fields.RequestTimeout,
+				MaxIdleConnections: tt.fields.MaxIdleConnections,
+				DisableTimeouts:    tt.fields.DisableTimeouts,
+			}
+			if got := c.Disable(tt.args.disable); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Disable() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
