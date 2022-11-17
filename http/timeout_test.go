@@ -279,3 +279,104 @@ func Test_timeoutImpl_SetRequestTimeout(t *testing.T) {
 		})
 	}
 }
+
+func Test_timeoutImpl_SetResponseTimeout(t *testing.T) {
+	type fields struct {
+		ResponseTimeout    time.Duration
+		RequestTimeout     time.Duration
+		MaxIdleConnections int
+		DisableTimeouts    bool
+	}
+	type args struct {
+		timeout time.Duration
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Timeout
+	}{
+		{
+			name: "Test SetResponseTimeout",
+			fields: fields{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    false,
+			},
+			args: args{
+				timeout: 10 * time.Second,
+			},
+			want: timeoutImpl{
+				ResponseTimeout:    10 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := timeoutImpl{
+				ResponseTimeout:    tt.fields.ResponseTimeout,
+				RequestTimeout:     tt.fields.RequestTimeout,
+				MaxIdleConnections: tt.fields.MaxIdleConnections,
+				DisableTimeouts:    tt.fields.DisableTimeouts,
+			}
+			if got := c.SetResponseTimeout(tt.args.timeout); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetResponseTimeout() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_timeoutImpl_SetMaxIdleConnections(t *testing.T) {
+	type fields struct {
+		ResponseTimeout    time.Duration
+		RequestTimeout     time.Duration
+		MaxIdleConnections int
+		DisableTimeouts    bool
+	}
+	type args struct {
+		maxConnections int
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Timeout
+	}{
+		{
+			name: "Test SetMaxIdleConnections",
+			fields: fields{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 10,
+				DisableTimeouts:    false,
+			},
+
+			args: args{
+				maxConnections: 20,
+			},
+			want: timeoutImpl{
+				ResponseTimeout:    5 * time.Second,
+				RequestTimeout:     5 * time.Second,
+				MaxIdleConnections: 20,
+				DisableTimeouts:    false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := timeoutImpl{
+				ResponseTimeout:    tt.fields.ResponseTimeout,
+				RequestTimeout:     tt.fields.RequestTimeout,
+				MaxIdleConnections: tt.fields.MaxIdleConnections,
+				DisableTimeouts:    tt.fields.DisableTimeouts,
+			}
+			if got := c.SetMaxIdleConnections(tt.args.maxConnections); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetMaxIdleConnections() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
