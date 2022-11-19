@@ -48,3 +48,44 @@ func Test_headerImpl_Set(t *testing.T) {
 		})
 	}
 }
+
+func Test_headerImpl_SetContentLength(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		contentLength int
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetContentLength",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				contentLength: 10,
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Content-Length": "10",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetContentLength(tt.args.contentLength); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetContentLength() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
