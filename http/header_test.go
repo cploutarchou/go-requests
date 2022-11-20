@@ -538,3 +538,83 @@ func Test_headerImpl_SetAcceptCharset(t *testing.T) {
 		})
 	}
 }
+
+func Test_headerImpl_SetContentEncoding(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		contentEncoding string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetContentEncoding",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				contentEncoding: "gzip",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Content-Encoding": "gzip",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetContentEncoding(tt.args.contentEncoding); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetContentEncoding() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetContentLanguage(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		contentLanguage string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetContentLanguage",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				contentLanguage: "en",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Content-Language": "en",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetContentLanguage(tt.args.contentLanguage); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetContentLanguage() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
