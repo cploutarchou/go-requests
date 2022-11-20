@@ -618,3 +618,479 @@ func Test_headerImpl_SetContentLanguage(t *testing.T) {
 		})
 	}
 }
+
+func Test_headerImpl_SetContentLocation(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		contentLocation string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetContentLocation",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				contentLocation: "http://www.example.com",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Content-Location": "http://www.example.com",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetContentLocation(tt.args.contentLocation); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetContentLocation() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetContentMD5(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		contentMD5 string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetContentMD5",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				contentMD5: "Q2hlY2sgSW50ZWdyaXR5IQ==",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Content-MD5": "Q2hlY2sgSW50ZWdyaXR5IQ==",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetContentMD5(tt.args.contentMD5); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetContentMD5() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetContentRange(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		contentRange string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetContentRange",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				contentRange: "bytes 200-1000/67589",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Content-Range": "bytes 200-1000/67589",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetContentRange(tt.args.contentRange); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetContentRange() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetCookie(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		cookie string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetCookie",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				cookie: "theme=light; sessionToken	=abc123",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Cookie": "theme=light; session	Token=abc123",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetCookie(tt.args.cookie); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetCookie() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetDate(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		date string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetDate",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				date: "Tue, 15 Nov 1994 08:12:31 GMT",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Date": "Tue, 15 Nov 1994 08:12:31 GMT",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetDate(tt.args.date); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetDate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetETag(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		etag string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetETag",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				etag: "737060cd8c284d8af7ad3082f209582d",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"ETag": "737060cd8c284d8af7ad3082f209582d",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetETag(tt.args.etag); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetETag() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetExpires(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		expires string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetExpires",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				expires: "Thu, 22 Dec 2022 16:00:00 GMT",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Expires": "Thu, 22 Dec 2022 16:00:00 GMT",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetExpires(tt.args.expires); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetExpires() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetAcceptLanguage(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		acceptLanguage string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetAcceptLanguage",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				acceptLanguage: "en-US",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Accept-Language": "en-US",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetAcceptLanguage(tt.args.acceptLanguage); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetAcceptLanguage() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetAcceptRanges(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		acceptRanges string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetAcceptRanges",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				acceptRanges: "bytes",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Accept-Ranges": "bytes",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetAcceptRanges(tt.args.acceptRanges); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetAcceptRanges() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetAge(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		age string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetAge",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				age: "12",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Age": "12",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetAge(tt.args.age); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetAge() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_SetAllow(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	type args struct {
+		allow string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Headers
+	}{
+		{
+			name: "Test SetAllow",
+			fields: fields{
+				values: map[string]string{},
+			},
+			args: args{
+				allow: "GET, HEAD",
+			},
+			want: &headerImpl{
+				values: map[string]string{
+					"Allow": "GET, HEAD",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.SetAllow(tt.args.allow); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetAllow() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_headerImpl_Values(t *testing.T) {
+	type fields struct {
+		values map[string]string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   map[string]string
+	}{
+		{
+			name: "Test Values",
+			fields: fields{
+				values: map[string]string{
+					"Accept": "application/json",
+				},
+			},
+			want: map[string]string{
+				"Accept": "application/json",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &headerImpl{
+				values: tt.fields.values,
+			}
+			if got := h.Values(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Values() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
