@@ -284,8 +284,8 @@ func Test_headerImpl_GetAll(t *testing.T) {
 				},
 			},
 			want: map[string][]string{
-				"key":  []string{"value"},
-				"key2": []string{"value2"},
+				"key":  {"value"},
+				"key2": {"value2"},
 			},
 		},
 	}
@@ -758,11 +758,11 @@ func Test_headerImpl_SetCookie(t *testing.T) {
 				values: map[string]string{},
 			},
 			args: args{
-				cookie: "theme=light; sessionToken	=abc123",
+				cookie: "theme=light;Token=abc123",
 			},
 			want: &headerImpl{
 				values: map[string]string{
-					"Cookie": "theme=light; session	Token=abc123",
+					"Cookie": "theme=light;Token=abc123",
 				},
 			},
 		},
