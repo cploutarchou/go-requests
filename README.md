@@ -9,7 +9,6 @@ go get github.com/cploutarchou/go-http
 ``` 
     
 ## Usage
-
 ```go
 package main
     
