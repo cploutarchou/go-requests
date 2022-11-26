@@ -355,3 +355,25 @@ func Test_authorizationImpl_IsSet(t *testing.T) {
 		})
 	}
 }
+
+func TestNewAuthorization(t *testing.T) {
+	tests := []struct {
+		name string
+		want Authorization
+	}{
+		{
+			name: "test1",
+			want: &authorizationImpl{
+				authorizationType: AuthorizationTypeBasic,
+				value:             "user:password",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewAuthorization().Basic("user", "password"); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewAuthorization() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
