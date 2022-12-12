@@ -1,6 +1,9 @@
 package http
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 const (
 	// defaultMaxIdleConnectionsPerHost is the default value for MaxIdleConnectionsPerHost
@@ -39,12 +42,14 @@ type Timeout interface {
 	GetMaxIdleConnections() int
 	GetRequestTimeout() time.Duration
 	GetResponseTimeout() time.Duration
-	Disable(bool) Timeout
+	Disable() Timeout
+	Enable() Timeout
 }
 
 // GetRequestTimeout returns the request Timeout
 // if the request Timeout is not set, it returns the default request Timeout.
 func (c timeoutImpl) GetRequestTimeout() time.Duration {
+	fmt.Println("The disable  timeouts: ", c.DisableTimeouts)
 	if c.RequestTimeout != defaultRequestTimeout {
 		return c.RequestTimeout
 	}
@@ -85,8 +90,13 @@ func (c timeoutImpl) GetMaxIdleConnections() int {
 //
 //	Example:
 //		client.DisableTimeouts(true)
-func (c timeoutImpl) Disable(disable bool) Timeout {
-	c.DisableTimeouts = disable
+func (c timeoutImpl) Disable() Timeout {
+	c.DisableTimeouts = true
+	return c
+}
+
+func (c timeoutImpl) Enable() Timeout {
+	c.DisableTimeouts = false
 	return c
 }
 

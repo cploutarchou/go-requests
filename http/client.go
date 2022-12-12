@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 )
@@ -18,6 +19,8 @@ type goHTTPClient struct {
 
 // Client is an interface for http client
 type Client interface {
+	DisableTimeouts()
+	EnableTimeouts()
 	Get(string, http.Header) (*http.Response, error)
 	Post(string, http.Header, interface{}) (*http.Response, error)
 	Put(string, http.Header, interface{}) (*http.Response, error)
@@ -204,6 +207,30 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 	return response, nil
 }
 
+// DisableTimeouts disables the timeouts for the client requests
+// Example:
+//
+//	client.DisableTimeouts()
+//	response, err := client.Get("https://www.google.com", nil, nil)
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+func (c *goHTTPClient) DisableTimeouts() {
+	c.Timeout = c.Timeout.Disable()
+}
+
+// EnableTimeouts enables the timeouts for the client requests
+// Example:
+//
+//	client.EnableTimeouts()
+//	response, err := client.Get("https://www.google.com", nil, nil)
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+func (c *goHTTPClient) EnableTimeouts() {
+	c.Timeout = c.Timeout.Enable()
+}
+
 // getClient returns the *http.client if exist
 // or creates a new one with the default settings
 // and returns it.
@@ -215,6 +242,7 @@ func (c *goHTTPClient) getClient() *http.Client {
 	if c.client != nil {
 		return c.client
 	}
+	fmt.Println("request timeout: ", c.Timeout.GetRequestTimeout())
 	client := http.Client{
 		Timeout: c.Timeout.GetRequestTimeout(),
 		Transport: &http.Transport{
