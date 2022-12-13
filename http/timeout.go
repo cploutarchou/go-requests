@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -49,7 +48,6 @@ type Timeout interface {
 // GetRequestTimeout returns the request Timeout
 // if the request Timeout is not set, it returns the default request Timeout.
 func (c timeoutImpl) GetRequestTimeout() time.Duration {
-	fmt.Println("The disable  timeouts: ", c.DisableTimeouts)
 	if c.RequestTimeout != defaultRequestTimeout {
 		return c.RequestTimeout
 	}

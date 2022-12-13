@@ -44,6 +44,7 @@ func (c builderImpl) Build() Client {
 	return &goHTTPClient{
 		Timeout: c.Timeout,
 		Headers: c.header,
+		state:   make(chan string, 100),
 	}
 }
 

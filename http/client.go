@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 )
@@ -15,6 +14,7 @@ type goHTTPClient struct {
 	client  *http.Client
 	Headers Headers
 	Timeout Timeout
+	state   chan string
 }
 
 // Client is an interface for http client
@@ -48,6 +48,10 @@ type Client interface {
 //	fmt.Println(string(body))
 func (c *goHTTPClient) Get(url string, headers http.Header) (*http.Response, error) {
 	response, err := c.do(http.MethodGet, url, headers, nil)
+	// restore timeout state to default in case it was disabled
+	if c.Timeout.GetRequestTimeout() == 0 {
+		c.Timeout = c.Timeout.Enable()
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -217,18 +221,12 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 //	}
 func (c *goHTTPClient) DisableTimeouts() {
 	c.Timeout = c.Timeout.Disable()
+	c.state <- "changed"
 }
 
-// EnableTimeouts enables the timeouts for the client requests
-// Example:
-//
-//	client.EnableTimeouts()
-//	response, err := client.Get("https://www.google.com", nil, nil)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
 func (c *goHTTPClient) EnableTimeouts() {
 	c.Timeout = c.Timeout.Enable()
+	c.state <- "changed"
 }
 
 // getClient returns the *http.client if exist
@@ -240,9 +238,22 @@ func (c *goHTTPClient) EnableTimeouts() {
 //   - ResponseTimeout: 5 seconds
 func (c *goHTTPClient) getClient() *http.Client {
 	if c.client != nil {
-		return c.client
+		// check if the client has been changed
+		select {
+		case <-c.state:
+			if msg := <-c.state; msg == "changed" {
+				return c.newClient()
+			}
+		default:
+			return c.client
+		}
 	}
-	fmt.Println("request timeout: ", c.Timeout.GetRequestTimeout())
+
+	c.client = c.newClient()
+	return c.client
+}
+
+func (c *goHTTPClient) newClient() *http.Client {
 	client := http.Client{
 		Timeout: c.Timeout.GetRequestTimeout(),
 		Transport: &http.Transport{
@@ -253,6 +264,5 @@ func (c *goHTTPClient) getClient() *http.Client {
 			}).DialContext,
 		},
 	}
-	c.client = &client
-	return c.client
+	return &client
 }

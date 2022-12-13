@@ -35,16 +35,17 @@ type User struct {
 }
 
 func main() {
-	user := User{
-		FirstName: "Christos",
-		LastName:  "Ploutarchou",
-		Username:  "username",
-	}
-	PostExample(user)
+	//user := User{
+	//	FirstName: "Christos",
+	//	LastName:  "Ploutarchou",
+	//	Username:  "username",
+	//}
+	//PostExample(user)
 	GetExample()
 }
 
 func GetExample() {
+	client.DisableTimeouts()
 	response, err := client.Get("https://api.github.com", nil)
 	if err != nil {
 		panic(err)
@@ -56,6 +57,22 @@ func GetExample() {
 		}
 	}(response.Body)
 	bytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(bytes))
+	client.EnableTimeouts()
+	response, err = client.Get("https://api.github.com", nil)
+	if err != nil {
+		panic(err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(response.Body)
+	bytes, err = io.ReadAll(response.Body)
 	if err != nil {
 		panic(err)
 	}
