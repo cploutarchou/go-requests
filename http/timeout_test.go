@@ -205,7 +205,7 @@ func Test_timeoutImpl_Disable(t *testing.T) {
 				MaxIdleConnections: tt.fields.MaxIdleConnections,
 				DisableTimeouts:    tt.fields.DisableTimeouts,
 			}
-			if got := c.Disable(tt.args.disable); !reflect.DeepEqual(got, tt.want) {
+			if got := c.Disable(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Disable() = %v, want %v", got, tt.want)
 			}
 		})
