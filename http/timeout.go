@@ -116,11 +116,36 @@ func (c timeoutImpl) SetRequestTimeout(timeout time.Duration) Timeout {
 	return c
 }
 
+// SetResponseTimeout sets the response Timeout.
+// 	If the value is 0, the response will not Timeout.
+//	If the value is negative, the response will time out immediately.
+//  If the value is positive, the response will time out after the specified duration.
+//	If the value is not set, the response will time out after 5 seconds.
+//	 If the value is not set and the DisableTimeouts is set to true, the response will not Timeout.
+//
+//	Example:
+//		client.SetResponseTimeout(10 * time.Second)
+//		client.SetResponseTimeout(0)
+//		client.SetResponseTimeout(-1)
+//		client.SetResponseTimeout(10 * time.Second)
 func (c timeoutImpl) SetResponseTimeout(timeout time.Duration) Timeout {
 	c.ResponseTimeout = timeout
 	return c
 }
 
+// SetMaxIdleConnections sets the maximum number of idle connections.
+// if the value is not set, the default value is 10. 
+//
+// if the value is 0, the maximum number of idle connections is unlimited.
+//
+// if the value is negative, the maximum number of idle connections is unlimited.
+//
+// if the value is positive, the maximum number of idle connections is the specified value.
+//
+//	Example:
+//		client.SetMaxIdleConnections(10)
+//		client.SetMaxIdleConnections(0)
+//		client.SetMaxIdleConnections(-1)
 func (c timeoutImpl) SetMaxIdleConnections(maxConnections int) Timeout {
 	c.MaxIdleConnections = maxConnections
 	return c
