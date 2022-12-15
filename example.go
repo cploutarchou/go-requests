@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/cploutarchou/go-http/http"
+	"github.com/cploutarchou/requests/http"
 )
 
 var client http.Client
