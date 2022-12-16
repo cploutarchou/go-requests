@@ -14,7 +14,7 @@ type goHTTPClient struct {
 	client  *http.Client
 	Headers Headers
 	Timeout Timeout
-	state   chan string
+	State   chan string
 }
 
 // Client is an interface for http client
@@ -221,12 +221,12 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 //	}
 func (c *goHTTPClient) DisableTimeouts() {
 	c.Timeout = c.Timeout.Disable()
-	c.state <- "changed"
+	c.State <- "changed"
 }
 
 func (c *goHTTPClient) EnableTimeouts() {
 	c.Timeout = c.Timeout.Enable()
-	c.state <- "changed"
+	c.State <- "changed"
 }
 
 // getClient returns the *http.client if exist
@@ -240,8 +240,8 @@ func (c *goHTTPClient) getClient() *http.Client {
 	if c.client != nil {
 		// check if the client has been changed
 		select {
-		case <-c.state:
-			if msg := <-c.state; msg == "changed" {
+		case <-c.State:
+			if msg := <-c.State; msg == "changed" {
 				return c.newClient()
 			}
 		default:

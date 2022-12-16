@@ -7,6 +7,7 @@ import (
 type builderImpl struct {
 	header  Headers
 	Timeout Timeout
+	State   chan string
 }
 
 func (c builderImpl) SetMaxIdleConnections(maxConnections int) Timeout {
@@ -44,7 +45,7 @@ func (c builderImpl) Build() Client {
 	return &goHTTPClient{
 		Timeout: c.Timeout,
 		Headers: c.header,
-		state:   make(chan string, 100),
+		State:   make(chan string, 100),
 	}
 }
 
@@ -52,6 +53,7 @@ func NewBuilder() Builder {
 	builder := &builderImpl{
 		Timeout: newTimeouts(),
 		header:  NewHeaders(),
+		State:   make(chan string, 100),
 	}
 	return builder
 }

@@ -110,6 +110,7 @@ func Test_builderImpl_Build(t *testing.T) {
 	type fields struct {
 		header  Headers
 		Timeout Timeout
+		State   chan string
 	}
 	tests := []struct {
 		name   string
@@ -121,6 +122,7 @@ func Test_builderImpl_Build(t *testing.T) {
 			fields: fields{
 				header:  NewHeaders(),
 				Timeout: newTimeouts(),
+				State:   make(chan string, 100),
 			},
 
 			want: builder.Build(),
@@ -132,6 +134,7 @@ func Test_builderImpl_Build(t *testing.T) {
 			c := builderImpl{
 				header:  tt.fields.header,
 				Timeout: tt.fields.Timeout,
+				State:   tt.fields.State,
 			}
 			if got := c.Build(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Build() = %v, want %v", got, tt.want)

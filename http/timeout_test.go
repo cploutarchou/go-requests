@@ -175,7 +175,7 @@ func Test_timeoutImpl_Disable(t *testing.T) {
 				ResponseTimeout:    5 * time.Second,
 				RequestTimeout:     5 * time.Second,
 				MaxIdleConnections: 10,
-				DisableTimeouts:    false,
+				DisableTimeouts:    true,
 			},
 		},
 		{
