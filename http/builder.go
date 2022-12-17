@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+var client Client
+
 type builderImpl struct {
 	header  Headers
 	Timeout Timeout
@@ -42,11 +44,14 @@ type Builder interface {
 }
 
 func (c builderImpl) Build() Client {
-	return &goHTTPClient{
-		Timeout: c.Timeout,
-		Headers: c.header,
-		State:   make(chan string, 100),
+	if client == nil {
+		client = &goHTTPClient{
+			Timeout: c.Timeout,
+			Headers: c.header,
+			State:   make(chan string, 100),
+		}
 	}
+	return client
 }
 
 func NewBuilder() Builder {

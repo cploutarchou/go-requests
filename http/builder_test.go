@@ -92,12 +92,26 @@ func TestNewBuilder(t *testing.T) {
 			want: &builderImpl{
 				header:  NewHeaders(),
 				Timeout: newTimeouts(),
+				State:   make(chan string, 100),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewBuilder(); !reflect.DeepEqual(got, tt.want) {
+			builder := NewBuilder()
+			if builder.Build() == nil {
+				t.Errorf("NewBuilder() = %v, want %v", builder.Build(), tt.want)
+			}
+			if got := builder.Headers(); !reflect.DeepEqual(got, tt.want.Headers()) {
+				t.Errorf("NewBuilder() = %v, want %v", got, tt.want)
+			}
+			if got := builder.SetRequestTimeout(5 * time.Second); !reflect.DeepEqual(got, tt.want.SetRequestTimeout(5*time.Second)) {
+				t.Errorf("NewBuilder() = %v, want %v", got, tt.want)
+			}
+			if got := builder.SetResponseTimeout(5 * time.Second); !reflect.DeepEqual(got, tt.want.SetResponseTimeout(5*time.Second)) {
+				t.Errorf("NewBuilder() = %v, want %v", got, tt.want)
+			}
+			if got := builder.SetMaxIdleConnections(10); !reflect.DeepEqual(got, tt.want.SetMaxIdleConnections(10)) {
 				t.Errorf("NewBuilder() = %v, want %v", got, tt.want)
 			}
 		})
@@ -107,23 +121,12 @@ func TestNewBuilder(t *testing.T) {
 func Test_builderImpl_Build(t *testing.T) {
 	var builder = NewBuilder()
 
-	type fields struct {
-		header  Headers
-		Timeout Timeout
-		State   chan string
-	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   Client
+		name string
+		want Client
 	}{
 		{
 			name: "Test Build",
-			fields: fields{
-				header:  NewHeaders(),
-				Timeout: newTimeouts(),
-				State:   make(chan string, 100),
-			},
 
 			want: builder.Build(),
 		},
@@ -131,12 +134,7 @@ func Test_builderImpl_Build(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := builderImpl{
-				header:  tt.fields.header,
-				Timeout: tt.fields.Timeout,
-				State:   tt.fields.State,
-			}
-			if got := c.Build(); !reflect.DeepEqual(got, tt.want) {
+			if got := builder.Build(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Build() = %v, want %v", got, tt.want)
 			}
 		})
