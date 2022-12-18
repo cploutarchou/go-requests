@@ -158,33 +158,45 @@ func Test_goHTTPClient_interfaceToXMLBytes(t *testing.T) {
 func Test_goHTTPClient_getHeaders(t *testing.T) {
 	type fields struct {
 		client  *http.Client
-		Headers Headers
-		Timeout Timeout
+		builder builderImpl
 	}
-	type args struct {
-		headers http.Header
+	builder := builderImpl{
+		header:  NewHeaders(),
+		Timeout: newTimeouts(),
 	}
-	builder := NewBuilder()
-	headers := builder.Headers().SetContentType("application/json")
+	builderNoHeaders := builderImpl{
+		header:  nil,
+		Timeout: newTimeouts(),
+	}
+	builder.header = builder.Headers().SetContentType("application/json")
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
 		want   http.Header
 	}{
-		{name: "nil", fields: fields{Headers: headers}, args: args{headers: nil}, want: http.Header{"Content-Type": []string{"application/json"}}},
-		{name: "empty", fields: fields{Headers: headers}, args: args{headers: http.Header{}}, want: http.Header{"Content-Type": []string{"application/json"}}},
-		{name: "not empty", fields: fields{Headers: headers}, args: args{headers: http.Header{"Accept": []string{"application/json"}}}, want: http.Header{"Content-Type": []string{"application/json"}, "Accept": []string{"application/json"}}},
+		{name: "empty", fields: fields{builder: builderNoHeaders}, want: http.Header{}},
+		{name: "set", fields: fields{builder: builder}, want: http.Header{"Content-Type": []string{"application/json"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := &goHTTPClient{
 				client:  tt.fields.client,
-				Headers: tt.fields.Headers,
-				Timeout: tt.fields.Timeout,
+				builder: &tt.fields.builder,
 			}
-			if got := c.getHeaders(tt.args.headers); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("goHTTPClient.getHeaders() = %v, want %v", got, tt.want)
+			if tt.name == "set" {
+				//check if the headers content type is set to application/json
+				if c.builder.header.Get("Content-Type") != "application/json" {
+					t.Errorf("invalid content type. Provided %s", c.builder.header.Get("Content-Type"))
+				}
+				if c.builder.header.Len() != 1 {
+					t.Errorf("invalid header length. Provided %d", c.builder.header.Len())
+				}
+			}
+			if tt.name == "empty" {
+				//check if the headers content type is set to application/json
+				if c.builder.header != nil {
+					t.Errorf("invalid content type. Provided %s", c.builder.header.Get("Content-Type"))
+				}
 			}
 		})
 	}
