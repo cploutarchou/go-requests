@@ -12,14 +12,21 @@ var client http.Client
 
 func getGithubClientWithOutConfig() http.Client {
 	builder := http.NewBuilder()
-	builder.SetRequestTimeout(50 * time.Second).SetResponseTimeout(50 * time.Second).SetMaxIdleConnections(10)
+	builder.SetRequestTimeout(50 * time.Second).
+		SetResponseTimeout(50 * time.Second).
+		SetMaxIdleConnections(10)
 	return builder.Build()
 }
 
 func getGithubClientBySetters() http.Client {
 	_client := http.NewBuilder()
-	_client.SetRequestTimeout(50 * time.Second).SetResponseTimeout(50 * time.Second).SetMaxIdleConnections(10)
-	_client.Headers().SetAcceptCharset("utf-8").SetAccept("application/json")
+	_client.
+		SetRequestTimeout(50 * time.Second).
+		SetResponseTimeout(50 * time.Second).
+		SetMaxIdleConnections(10)
+	_client.Headers().
+		SetAcceptCharset("utf-8").
+		SetAccept("application/json")
 	return _client.Build()
 }
 
