@@ -237,16 +237,12 @@ func (c *goHTTPClient) EnableTimeouts() {
 func (c *goHTTPClient) getClient() *http.Client {
 	if c.client != nil {
 		// check if the client has been changed
-		select {
-		case <-c.builder.State:
-			if msg := <-c.builder.State; msg == "changed" {
-				return c.newClient()
-			}
-		default:
-			return c.client
+		msg := <-c.builder.State
+		if msg == "changed" {
+			c.client = c.newClient()
 		}
+		return c.client
 	}
-
 	c.client = c.newClient()
 	return c.client
 }

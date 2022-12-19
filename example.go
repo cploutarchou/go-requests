@@ -42,12 +42,12 @@ type User struct {
 }
 
 func main() {
-	//user := User{
-	//	FirstName: "Christos",
-	//	LastName:  "Ploutarchou",
-	//	Username:  "username",
-	//}
-	//PostExample(user)
+	user := User{
+		FirstName: "Christos",
+		LastName:  "Ploutarchou",
+		Username:  "username",
+	}
+	PostExample(user)
 	GetExample()
 }
 
@@ -97,9 +97,9 @@ func PostExample(u User) {
 			panic(err)
 		}
 	}(response.Body)
-	// bytes, err := io.ReadAll(response.Body)
-	// if err != nil {
-	//	panic(err)
-	//}
-	fmt.Println(response.StatusCode)
+	bytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(bytes))
 }
