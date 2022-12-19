@@ -11,10 +11,8 @@ type Method string
 // goHTTPClient is the default implementation of the Client interface
 // it is used to make http requests
 type goHTTPClient struct {
+	builder *builderImpl
 	client  *http.Client
-	Headers Headers
-	Timeout Timeout
-	State   chan string
 }
 
 // Client is an interface for http client
@@ -41,7 +39,7 @@ type Client interface {
 //		log.Fatal(err)
 //	}
 //	defer response.Body.Close()
-//	body, err := ioutil.ReadAll(response.Body)
+//	body, err := util.ReadAll(response.Body)
 //	if err != nil {
 //	log.Fatal(err)
 //	}
@@ -49,8 +47,8 @@ type Client interface {
 func (c *goHTTPClient) Get(url string, headers http.Header) (*http.Response, error) {
 	response, err := c.do(http.MethodGet, url, headers, nil)
 	// restore timeout state to default in case it was disabled
-	if c.Timeout.GetRequestTimeout() == 0 {
-		c.Timeout = c.Timeout.Enable()
+	if c.builder.Timeout.GetRequestTimeout() == 0 {
+		c.builder.Timeout = c.builder.Timeout.Enable()
 	}
 	if err != nil {
 		return nil, err
@@ -173,7 +171,7 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 //				log.Fatal(err)
 //			}
 //			defer response.Body.Close()
-//		body, err := ioutil.ReadAll(response.Body)
+//		body, err := util.ReadAll(response.Body)
 //		if err != nil {
 //			log.Fatal(err)
 //	}
@@ -220,13 +218,13 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 //		log.Fatal(err)
 //	}
 func (c *goHTTPClient) DisableTimeouts() {
-	c.Timeout = c.Timeout.Disable()
-	c.State <- "changed"
+	c.builder.Timeout = c.builder.Timeout.Disable()
+	c.builder.State <- "changed"
 }
 
 func (c *goHTTPClient) EnableTimeouts() {
-	c.Timeout = c.Timeout.Enable()
-	c.State <- "changed"
+	c.builder.Timeout = c.builder.Timeout.Enable()
+	c.builder.State <- "changed"
 }
 
 // getClient returns the *http.client if exist
@@ -240,8 +238,8 @@ func (c *goHTTPClient) getClient() *http.Client {
 	if c.client != nil {
 		// check if the client has been changed
 		select {
-		case <-c.State:
-			if msg := <-c.State; msg == "changed" {
+		case <-c.builder.State:
+			if msg := <-c.builder.State; msg == "changed" {
 				return c.newClient()
 			}
 		default:
@@ -255,12 +253,12 @@ func (c *goHTTPClient) getClient() *http.Client {
 
 func (c *goHTTPClient) newClient() *http.Client {
 	client := http.Client{
-		Timeout: c.Timeout.GetRequestTimeout(),
+		Timeout: c.builder.Timeout.GetRequestTimeout(),
 		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   c.Timeout.GetMaxIdleConnections(),
-			ResponseHeaderTimeout: c.Timeout.GetResponseTimeout(),
+			MaxIdleConnsPerHost:   c.builder.Timeout.GetMaxIdleConnections(),
+			ResponseHeaderTimeout: c.builder.Timeout.GetResponseTimeout(),
 			DialContext: (&net.Dialer{
-				Timeout: c.Timeout.GetRequestTimeout(),
+				Timeout: c.builder.Timeout.GetRequestTimeout(),
 			}).DialContext,
 		},
 	}

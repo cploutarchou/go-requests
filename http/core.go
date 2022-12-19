@@ -77,7 +77,7 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 	res := make(http.Header)
 	// Set common Headers to the request
-	for header, value := range c.Headers.GetAll() {
+	for header, value := range c.builder.Headers().GetAll() {
 		if len(value) > 0 {
 			res.Set(header, value[0])
 		}

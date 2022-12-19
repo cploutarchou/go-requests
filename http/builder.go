@@ -9,7 +9,16 @@ var client Client
 type builderImpl struct {
 	header  Headers
 	Timeout Timeout
+	builder Builder
 	State   chan string
+}
+
+type Builder interface {
+	SetRequestTimeout(timeout time.Duration) Timeout
+	SetResponseTimeout(timeout time.Duration) Timeout
+	SetMaxIdleConnections(maxConnections int) Timeout
+	Headers() Headers
+	Build() Client
 }
 
 func (c builderImpl) SetMaxIdleConnections(maxConnections int) Timeout {
@@ -35,20 +44,10 @@ func (c builderImpl) SetResponseTimeout(timeout time.Duration) Timeout {
 	return c.Timeout
 }
 
-type Builder interface {
-	SetRequestTimeout(timeout time.Duration) Timeout
-	SetResponseTimeout(timeout time.Duration) Timeout
-	SetMaxIdleConnections(maxConnections int) Timeout
-	Headers() Headers
-	Build() Client
-}
-
 func (c builderImpl) Build() Client {
 	if client == nil {
 		client = &goHTTPClient{
-			Timeout: c.Timeout,
-			Headers: c.header,
-			State:   make(chan string, 100),
+			builder: &c,
 		}
 	}
 	return client
