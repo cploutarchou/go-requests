@@ -239,12 +239,11 @@ func (c *goHTTPClient) getClient() *http.Client {
 		// check if the client has been changed
 		msg := <-c.builder.State
 		if msg == "changed" {
-			c.client = c.newClient()
+			return c.newClient()
 		}
 		return c.client
 	}
-	c.client = c.newClient()
-	return c.client
+	return c.newClient()
 }
 
 func (c *goHTTPClient) newClient() *http.Client {
