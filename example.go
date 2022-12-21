@@ -49,6 +49,11 @@ func main() {
 	}
 	PostExample(user)
 	GetExample()
+	// Test concurrency safety
+	for i := 0; i < 100; i++ {
+		go GetExample()
+	}
+	time.Sleep(10 * time.Second)
 }
 
 func GetExample() {

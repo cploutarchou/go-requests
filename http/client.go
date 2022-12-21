@@ -2,8 +2,10 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
+	"sync"
 )
 
 type Method string
@@ -11,8 +13,9 @@ type Method string
 // goHTTPClient is the default implementation of the Client interface
 // it is used to make http requests
 type goHTTPClient struct {
-	builder *builderImpl
-	client  *http.Client
+	builder    *builderImpl
+	client     *http.Client
+	clientOnce sync.Once
 }
 
 // Client is an interface for http client
@@ -69,7 +72,7 @@ func (c *goHTTPClient) Get(url string, headers http.Header) (*http.Response, err
 //		log.Fatal(err)
 //	}
 //	defer response.Body.Close()
-//	body, err := ioutil.ReadAll(response.Body)
+//	body, err := io.ReadAll(response.Body)
 //	if err != nil {
 //		log.Fatal(err)
 //	}
@@ -99,7 +102,7 @@ func (c *goHTTPClient) Post(url string, headers http.Header, body interface{}) (
 //		log.Fatal(err)
 //	}
 //	defer response.Body.Close()
-//	body, err := ioutil.ReadAll(response.Body)
+//	body, err := io.ReadAll(response.Body)
 //	if err != nil {
 //	log.Fatal(err)
 //	}
@@ -126,7 +129,7 @@ func (c *goHTTPClient) Put(url string, headers http.Header, body interface{}) (*
 //		log.Fatal(err)
 //	}
 //	defer response.Body.Close()
-//		body, err := ioutil.ReadAll(response.Body)
+//		body, err := io.ReadAll(response.Body)
 //	if err != nil {
 //		log.Fatal(err)
 //	}
@@ -219,12 +222,10 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 //	}
 func (c *goHTTPClient) DisableTimeouts() {
 	c.builder.Timeout = c.builder.Timeout.Disable()
-	c.builder.State <- "changed"
 }
 
 func (c *goHTTPClient) EnableTimeouts() {
 	c.builder.Timeout = c.builder.Timeout.Enable()
-	c.builder.State <- "changed"
 }
 
 // getClient returns the *http.client if exist
@@ -235,27 +236,23 @@ func (c *goHTTPClient) EnableTimeouts() {
 //   - RequestTimeout: 5 seconds
 //   - ResponseTimeout: 5 seconds
 func (c *goHTTPClient) getClient() *http.Client {
-	if c.client != nil {
-		// check if the client has been changed
-		msg := <-c.builder.State
-		if msg == "changed" {
-			return c.newClient()
+	c.clientOnce.Do(func() {
+		fmt.Println("================================================================")
+		fmt.Println("CREATE HTTP CLIENT")
+		fmt.Println("================================================================")
+		c.client = &http.Client{
+			Timeout: c.builder.Timeout.GetRequestTimeout(),
+			Transport: &http.Transport{
+				MaxIdleConnsPerHost:   c.builder.Timeout.GetMaxIdleConnections(),
+				ResponseHeaderTimeout: c.builder.Timeout.GetResponseTimeout(),
+				DialContext: (&net.Dialer{
+					Timeout: c.builder.Timeout.GetRequestTimeout(),
+				}).DialContext,
+			},
 		}
-		return c.client
-	}
-	return c.newClient()
-}
 
-func (c *goHTTPClient) newClient() *http.Client {
-	client := http.Client{
-		Timeout: c.builder.Timeout.GetRequestTimeout(),
-		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   c.builder.Timeout.GetMaxIdleConnections(),
-			ResponseHeaderTimeout: c.builder.Timeout.GetResponseTimeout(),
-			DialContext: (&net.Dialer{
-				Timeout: c.builder.Timeout.GetRequestTimeout(),
-			}).DialContext,
-		},
-	}
-	return &client
+	})
+
+	return c.client
+
 }
