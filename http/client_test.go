@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"reflect"
 	"testing"
@@ -62,6 +63,14 @@ func Test_goHTTPClient_Get(t *testing.T) {
 }
 
 func Test_goHTTPClient_Post(t *testing.T) {
+	type User struct {
+		Name     string `json:"name"`
+		UserName string `json:"username"`
+	}
+	user := User{
+		Name:     "Christos Ploutarchou",
+		UserName: "christos",
+	}
 	type fields struct {
 		Headers Headers
 		Timeout Timeout
@@ -85,9 +94,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 				Timeout: newTimeouts(),
 			},
 			args: args{
-				url:     "https://api.github.com",
-				headers: nil,
-				body:    nil,
+				url: "https://api.github.com",
 			},
 			want: &http.Response{
 				StatusCode: 200,
@@ -101,7 +108,8 @@ func Test_goHTTPClient_Post(t *testing.T) {
 			tt.name, func(t *testing.T) {
 				builder := NewBuilder()
 				client := builder.Build()
-				res, err := client.Post(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
+				client.DisableTimeouts()
+				res, err := client.Post(tt.args.url, tt.fields.Headers.GetAll(), user)
 				got := &http.Response{
 					StatusCode: res.StatusCode,
 					Status:     res.Status,
@@ -110,6 +118,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 					t.Errorf("goHTTPClient.Post() error = %v, wantErr %v", err, tt.wantErr)
 					return
 				}
+				fmt.Println("kokos")
 				if !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("goHTTPClient.Post() = %v, want %v", got, tt.want)
 				}

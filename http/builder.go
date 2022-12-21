@@ -4,13 +4,12 @@ import (
 	"time"
 )
 
-var client Client
-
 type builderImpl struct {
 	header  Headers
 	Timeout Timeout
 	builder Builder
 	State   chan string
+	client  *goHTTPClient
 }
 
 type Builder interface {
@@ -45,12 +44,12 @@ func (c builderImpl) SetResponseTimeout(timeout time.Duration) Timeout {
 }
 
 func (c builderImpl) Build() Client {
-	if client == nil {
-		client = &goHTTPClient{
+	if c.client == nil {
+		c.client = &goHTTPClient{
 			builder: &c,
 		}
 	}
-	return client
+	return c.client
 }
 
 func NewBuilder() Builder {
