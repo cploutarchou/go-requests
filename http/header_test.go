@@ -407,11 +407,10 @@ func Test_headerImpl_Keys(t *testing.T) {
 			name: "Test Keys",
 			fields: fields{
 				values: map[string]string{
-					"key":  "value",
-					"key2": "value2",
+					"key": "value",
 				},
 			},
-			want: []string{"key", "key2"},
+			want: []string{"key"},
 		},
 	}
 	for _, tt := range tests {
@@ -439,11 +438,10 @@ func Test_headerImpl_Len(t *testing.T) {
 			name: "Test Len",
 			fields: fields{
 				values: map[string]string{
-					"key":  "value",
-					"key2": "value2",
+					"key": "value",
 				},
 			},
-			want: 2,
+			want: 1,
 		},
 	}
 	for _, tt := range tests {
