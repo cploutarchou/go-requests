@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -50,7 +51,7 @@ func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, er
 //		// Return the response
 //		return c.client.Do(req)
 //	}
-func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*Response, error) {
 	var err error
 	var req *http.Request
 	availableHeaders := c.getHeaders(headers)
@@ -71,7 +72,25 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	req.Header = availableHeaders
 	// Return the response
 	c.client = c.getClient()
-	return c.client.Do(req)
+	response, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(response.Body)
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, errors.New("unable to read response body. Error: " + err.Error())
+	}
+	finalResponse := Response{
+		statusCode: response.StatusCode,
+		header:     response.Header,
+		body:       responseBody,
+		status:     response.Status,
+	}
+	return &finalResponse, nil
 }
 
 // getHeaders returns the Headers that are set by the user and the default Headers that are set by the client
