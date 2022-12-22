@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cploutarchou/requests/http"
+	"github.com/cploutarchou/go-requests/http"
 )
 
 var client http.Client
