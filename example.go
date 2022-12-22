@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/cploutarchou/requests/http"
@@ -60,35 +59,12 @@ func GetExample() {
 	client.DisableTimeouts()
 	response, err := client.Get("https://api.github.com", nil)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(response.Body)
-	bytes, err := io.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(bytes))
-	client.EnableTimeouts()
-	response, err = client.Get("https://api.github.com", nil)
-	if err != nil {
-		panic(err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(response.Body)
-	bytes, err = io.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(bytes))
+	fmt.Println(response.String())
+	fmt.Println(response.StatusCode())
+	fmt.Println(response.Status())
 }
 
 func PostExample(u User) {
@@ -96,15 +72,7 @@ func PostExample(u User) {
 	if err != nil {
 		panic(err)
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(response.Body)
-	bytes, err := io.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(bytes))
+	fmt.Println(response.String())
+	fmt.Println(response.StatusCode())
+	fmt.Println(response.Status())
 }

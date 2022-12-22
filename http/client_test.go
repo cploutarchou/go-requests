@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"reflect"
 	"testing"
@@ -21,7 +20,7 @@ func Test_goHTTPClient_Get(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *http.Response
+		want    *Response
 		wantErr bool
 	}{
 
@@ -35,9 +34,9 @@ func Test_goHTTPClient_Get(t *testing.T) {
 				url:     "https://api.github.com",
 				headers: nil,
 			},
-			want: &http.Response{
-				StatusCode: 200,
-				Status:     "200 OK",
+			want: &Response{
+				statusCode: 200,
+				status:     "200 OK",
 			},
 			wantErr: false,
 		},
@@ -47,9 +46,9 @@ func Test_goHTTPClient_Get(t *testing.T) {
 			builder := NewBuilder()
 			client := builder.Build()
 			res, err := client.Get(tt.args.url, tt.fields.Headers.GetAll())
-			got := &http.Response{
-				StatusCode: res.StatusCode,
-				Status:     res.Status,
+			got := &Response{
+				statusCode: res.StatusCode(),
+				status:     res.Status(),
 			}
 			if (err != nil) != tt.wantErr {
 				t.Errorf("goHTTPClient.Get() error = %v, wantErr %v", err, tt.wantErr)
@@ -84,7 +83,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *http.Response
+		want    *Response
 		wantErr bool
 	}{
 		{
@@ -96,9 +95,9 @@ func Test_goHTTPClient_Post(t *testing.T) {
 			args: args{
 				url: "https://api.github.com",
 			},
-			want: &http.Response{
-				StatusCode: 200,
-				Status:     "200 OK",
+			want: &Response{
+				statusCode: 200,
+				status:     "200 OK",
 			},
 			wantErr: false,
 		},
@@ -110,15 +109,14 @@ func Test_goHTTPClient_Post(t *testing.T) {
 				client := builder.Build()
 				client.DisableTimeouts()
 				res, err := client.Post(tt.args.url, tt.fields.Headers.GetAll(), user)
-				got := &http.Response{
-					StatusCode: res.StatusCode,
-					Status:     res.Status,
+				got := &Response{
+					statusCode: res.StatusCode(),
+					status:     res.Status(),
 				}
 				if (err != nil) != tt.wantErr {
 					t.Errorf("goHTTPClient.Post() error = %v, wantErr %v", err, tt.wantErr)
 					return
 				}
-				fmt.Println("kokos")
 				if !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("goHTTPClient.Post() = %v, want %v", got, tt.want)
 				}
@@ -141,7 +139,7 @@ func Test_goHTTPClient_Put(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *http.Response
+		want    *Response
 		wantErr bool
 	}{
 		{
@@ -155,9 +153,9 @@ func Test_goHTTPClient_Put(t *testing.T) {
 				headers: nil,
 				body:    nil,
 			},
-			want: &http.Response{
-				StatusCode: 200,
-				Status:     "200 OK",
+			want: &Response{
+				statusCode: 200,
+				status:     "200 OK",
 			},
 			wantErr: false,
 		},
@@ -168,9 +166,9 @@ func Test_goHTTPClient_Put(t *testing.T) {
 				builder := NewBuilder()
 				client := builder.Build()
 				res, err := client.Put(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &http.Response{
-					StatusCode: res.StatusCode,
-					Status:     res.Status,
+				got := &Response{
+					statusCode: res.StatusCode(),
+					status:     res.Status(),
 				}
 				if (err != nil) != tt.wantErr {
 					t.Errorf("goHTTPClient.Put() error = %v, wantErr %v", err, tt.wantErr)
@@ -198,7 +196,7 @@ func Test_goHTTPClient_Patch(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *http.Response
+		want    *Response
 		wantErr bool
 	}{
 		{
@@ -212,9 +210,9 @@ func Test_goHTTPClient_Patch(t *testing.T) {
 				headers: nil,
 				body:    nil,
 			},
-			want: &http.Response{
-				StatusCode: 200,
-				Status:     "200 OK",
+			want: &Response{
+				statusCode: 200,
+				status:     "200 OK",
 			},
 			wantErr: false,
 		},
@@ -225,9 +223,9 @@ func Test_goHTTPClient_Patch(t *testing.T) {
 				builder := NewBuilder()
 				client := builder.Build()
 				res, err := client.Patch(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &http.Response{
-					StatusCode: res.StatusCode,
-					Status:     res.Status,
+				got := &Response{
+					statusCode: res.StatusCode(),
+					status:     res.Status(),
 				}
 				if (err != nil) != tt.wantErr {
 					t.Errorf("goHTTPClient.Patch() error = %v, wantErr %v", err, tt.wantErr)
@@ -255,7 +253,7 @@ func Test_goHTTPClient_Delete(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *http.Response
+		want    *Response
 		wantErr bool
 	}{
 		{
@@ -269,9 +267,9 @@ func Test_goHTTPClient_Delete(t *testing.T) {
 				headers: nil,
 				body:    nil,
 			},
-			want: &http.Response{
-				StatusCode: 200,
-				Status:     "200 OK",
+			want: &Response{
+				statusCode: 200,
+				status:     "200 OK",
 			},
 			wantErr: false,
 		},
@@ -282,9 +280,9 @@ func Test_goHTTPClient_Delete(t *testing.T) {
 				builder := NewBuilder()
 				client := builder.Build()
 				res, err := client.Delete(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &http.Response{
-					StatusCode: res.StatusCode,
-					Status:     res.Status,
+				got := &Response{
+					statusCode: res.StatusCode(),
+					status:     res.Status(),
 				}
 				if (err != nil) != tt.wantErr {
 					t.Errorf("goHTTPClient.Delete() error = %v, wantErr %v", err, tt.wantErr)
@@ -312,7 +310,7 @@ func Test_goHTTPClient_Head(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *http.Response
+		want    *Response
 		wantErr bool
 	}{
 		{
@@ -326,9 +324,9 @@ func Test_goHTTPClient_Head(t *testing.T) {
 				headers: nil,
 				body:    nil,
 			},
-			want: &http.Response{
-				StatusCode: 200,
-				Status:     "200 OK",
+			want: &Response{
+				statusCode: 200,
+				status:     "200 OK",
 			},
 			wantErr: false,
 		},
@@ -339,9 +337,9 @@ func Test_goHTTPClient_Head(t *testing.T) {
 				builder := NewBuilder()
 				client := builder.Build()
 				res, err := client.Head(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &http.Response{
-					StatusCode: res.StatusCode,
-					Status:     res.Status,
+				got := &Response{
+					statusCode: res.StatusCode(),
+					status:     res.Status(),
 				}
 				if (err != nil) != tt.wantErr {
 					t.Errorf("goHTTPClient.Head() error = %v, wantErr %v", err, tt.wantErr)
