@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 	"sync"
@@ -228,18 +227,9 @@ func (c *goHTTPClient) EnableTimeouts() {
 	c.builder.Timeout = c.builder.Timeout.Enable()
 }
 
-// getClient returns the *http.client if exist
-// or creates a new one with the default settings
-// and returns it.
-// The default settings are:
-//   - MaxIdleConnectionsPerHost: 10
-//   - RequestTimeout: 5 seconds
-//   - ResponseTimeout: 5 seconds
+// getClient returns the *http.client if exists or creates a new one and returns it.
 func (c *goHTTPClient) getClient() *http.Client {
 	c.clientOnce.Do(func() {
-		fmt.Println("================================================================")
-		fmt.Println("CREATE HTTP CLIENT")
-		fmt.Println("================================================================")
 		c.client = &http.Client{
 			Timeout: c.builder.Timeout.GetRequestTimeout(),
 			Transport: &http.Transport{
@@ -250,9 +240,7 @@ func (c *goHTTPClient) getClient() *http.Client {
 				}).DialContext,
 			},
 		}
-
 	})
-
 	return c.client
 
 }

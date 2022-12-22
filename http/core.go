@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// getBody returns the body of the request.
 func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, error) {
 	if body == nil {
 		return nil, nil
@@ -73,7 +74,7 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	return c.client.Do(req)
 }
 
-// getHeaders returns the Headers that are set
+// getHeaders returns the Headers that are set by the user and the default Headers that are set by the client
 func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 	res := make(http.Header)
 	// Set common Headers to the request
@@ -91,6 +92,7 @@ func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 	return res
 }
 
+// interfaceToJSONBytes converts an interface to a JSON byte array and returns it and an error if something goes wrong
 func (c *goHTTPClient) interfaceToJSONBytes(data interface{}) ([]byte, error) {
 	res, err := json.Marshal(data)
 	if err != nil {
@@ -98,6 +100,8 @@ func (c *goHTTPClient) interfaceToJSONBytes(data interface{}) ([]byte, error) {
 	}
 	return res, nil
 }
+
+// interfaceToXMLBytes converts an interface to an XML byte array and returns it and an error if something goes wrong
 func (c *goHTTPClient) interfaceToXMLBytes(data interface{}) ([]byte, error) {
 	res, err := xml.Marshal(data)
 	if err != nil {

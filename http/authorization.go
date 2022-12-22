@@ -29,13 +29,17 @@ type Authorization interface {
 	IsSet() bool
 }
 
+// AuthorizationType is the type of the authorization header value
 type AuthorizationType string
 
 const (
-	AuthorizationTypeBasic  AuthorizationType = "Basic"
+	//AuthorizationTypeBasic is the basic authorization type
+	AuthorizationTypeBasic AuthorizationType = "Basic"
+	//AuthorizationTypeBearer is the bearer authorization type
 	AuthorizationTypeBearer AuthorizationType = "Bearer"
 )
 
+// authorizationImpl is the implementation of the authorization interface
 type authorizationImpl struct {
 	authorizationType AuthorizationType
 	value             string
