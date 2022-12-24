@@ -1,23 +1,27 @@
 package examples
 
-type Endpoints struct {
-	CurrentUserURL                   string `json:"current_user_url"`
-	AuthorizationsURL                string `json:"authorizations_url"`
-	CurrentUserAuthorizationsHTMLURL string `json:"current_user_authorizations_html_url"`
-	RepositoryURL                    string `json:"repository_url"`
-	CodeSearchURL                    string `json:"code_search_url"`
-	CommitSearchURL                  string `json:"commit_search_url"`
+type Contact struct {
+	ID        string `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	DateAdded string `json:"dateAdded"`
+	CompanyID string `json:"companyId"`
 }
 
-func GetGithubEndpoints(url string) (*Endpoints, error) {
+type Contacts struct {
+	Data []Contact `json:"contacts"`
+}
+
+func GetContacts(url string) ([]Contact, error) {
 	res, err := client.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
-	var endpoints Endpoints
-	err = res.Unmarshal(&endpoints)
+	var contacts Contacts
+	err = res.Unmarshal(&contacts)
 	if err != nil {
 		return nil, err
 	}
-	return &endpoints, nil
+	return contacts.Data, nil
 }
