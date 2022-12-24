@@ -1,12 +1,14 @@
 package examples
 
 import (
-	"github.com/cploutarchou/go-requests/http"
 	"time"
+
+	"github.com/cploutarchou/go-requests/http"
 )
 
 var (
 	client = getClient()
+	baseURL = "https://go-requests.mocklab.io/"
 )
 
 func getClient() http.Client {
