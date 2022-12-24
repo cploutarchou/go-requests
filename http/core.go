@@ -85,10 +85,11 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 		return nil, errors.New("unable to read response body. Error: " + err.Error())
 	}
 	finalResponse := Response{
-		statusCode: response.StatusCode,
-		header:     response.Header,
-		body:       responseBody,
-		status:     response.Status,
+		statusCode:  response.StatusCode,
+		header:      response.Header,
+		body:        responseBody,
+		status:      response.Status,
+		contentType: response.Header.Get("Content-Type"),
 	}
 	return &finalResponse, nil
 }
