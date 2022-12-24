@@ -9,7 +9,7 @@ type Endpoints struct {
 	CommitSearchURL                  string `json:"commit_search_url"`
 }
 
-func GetEndpoint(url string) (*Endpoints, error) {
+func GetGithubEndpoints(url string) (*Endpoints, error) {
 	res, err := client.Get(url, nil)
 	if err != nil {
 		return nil, err

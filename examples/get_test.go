@@ -28,28 +28,28 @@ func TestGetEndpoint(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetEndpoint(tt.args.endpoint)
+			got, err := GetGithubEndpoints(tt.args.endpoint)
 			if err != nil {
-				t.Errorf("GetEndpoint() error = %v", err)
+				t.Errorf("GetGithubEndpoints() error = %v", err)
 				return
 			}
 			if got.CurrentUserURL != tt.want.CurrentUserURL {
-				t.Errorf("GetEndpoint() got = %v, want %v", got, tt.want)
+				t.Errorf("GetGithubEndpoints() got = %v, want %v", got, tt.want)
 			}
 			if got.AuthorizationsURL != tt.want.AuthorizationsURL {
-				t.Errorf("GetEndpoint() got = %v, want %v", got, tt.want)
+				t.Errorf("GetGithubEndpoints() got = %v, want %v", got, tt.want)
 			}
 			if got.CurrentUserAuthorizationsHTMLURL != tt.want.CurrentUserAuthorizationsHTMLURL {
-				t.Errorf("GetEndpoint() got = %v, want %v", got, tt.want)
+				t.Errorf("GetGithubEndpoints() got = %v, want %v", got, tt.want)
 			}
 			if got.RepositoryURL != tt.want.RepositoryURL {
-				t.Errorf("GetEndpoint() got = %v, want %v", got, tt.want)
+				t.Errorf("GetGithubEndpoints() got = %v, want %v", got, tt.want)
 			}
 			if got.CodeSearchURL != tt.want.CodeSearchURL {
-				t.Errorf("GetEndpoint() got = %v, want %v", got, tt.want)
+				t.Errorf("GetGithubEndpoints() got = %v, want %v", got, tt.want)
 			}
 			if got.CommitSearchURL != tt.want.CommitSearchURL {
-				t.Errorf("GetEndpoint() got = %v, want %v", got, tt.want)
+				t.Errorf("GetGithubEndpoints() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
