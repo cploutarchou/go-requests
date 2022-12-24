@@ -138,7 +138,7 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
-	}
+	} 
 	response, err := c.do(http.MethodGet, url, headers, data)
 	if err != nil {
 		return nil, err

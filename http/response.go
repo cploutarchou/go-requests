@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -65,23 +66,16 @@ func (r *Response) String() string {
 }
 
 func (r *Response) getContentType() ContentType {
-	contentType := ""
-	if r.contentType == "" {
-		return ""
-	}
-	if strings.Contains(r.contentType, ";") {
-		contentType = strings.Split(r.contentType, ";")[0]
-	}
-	if strings.Contains(contentType, "application/json") {
+	if strings.Contains(r.contentType, "application/json") {
 		return jsonContentType
 	}
-	if strings.Contains(contentType, "application/xml") {
+	if strings.Contains(r.contentType, "application/xml") {
 		return xmlContentType
 	}
-	if strings.Contains(contentType, "application/yaml") {
+	if strings.Contains(r.contentType, "application/yaml") {
 		return yamlContentType
 	}
-	if strings.Contains(contentType, "text/plain") {
+	if strings.Contains(r.contentType, "text/plain") {
 		return textContentType
 	}
 	return noneContentType
@@ -114,6 +108,7 @@ func (r *Response) unmarshalText(v interface{}) error {
 //   - It returns an error if the unmarshal method fails.
 //   - It returns an error if the given interface is not a pointer.
 func (r *Response) Unmarshal(v interface{}) ErrorContentType {
+	fmt.Println("Response:  content-type:", r.getContentType())
 	switch r.getContentType() {
 	case jsonContentType:
 		return r.unmarshalJSON(v)
