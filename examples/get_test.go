@@ -3,97 +3,76 @@ package examples
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
-func TestGetContasts(t *testing.T) {
-	type args struct {
-		endpoint string
-	}
+func TestGetUsers(t *testing.T) {
+
 	tests := []struct {
 		name string
-		args args
-		want []Contact
+		want int
 	}{
 		{
-			name: "Test Get Endpoint",
-			args: args{
-				endpoint: baseURL + "v1/contacts",
-			},
-			want: []Contact{
-				{
-					ID:        "11111",
-					FirstName: "Tom",
-					LastName:  "Smith",
-					Email:     "tom.smith@example.com",
-					DateAdded: "2021-01-03",
-					CompanyID: "123",
-				},
-				{
-					ID:        "22222",
-					FirstName: "Suki",
-					LastName:  "Patel",
-					Email:     "spatel@example.com",
-					DateAdded: "2020-11-12",
-					CompanyID: "123",
-				},
-				{
-					ID:        "33333",
-					FirstName: "Lexine",
-					LastName:  "Barnfield",
-					Email:     "barnfield8@example.com",
-					DateAdded: "2021-01-03",
-					CompanyID: "234",
-				},
-			},
+			name: "Test get all users",
+			want: 39,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetContacts(tt.args.endpoint)
+			got, err := GetUsers()
 			if err != nil {
-				t.Errorf("GetContacts() error = %v", err)
+				t.Errorf("GetUsers() error = %v", err)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetContacts() got = %v, want %v", got, tt.want)
+			if len(got) != tt.want {
+				t.Errorf("GetUsers() = %v, want %v", got, tt.want)
+			}
+			for _, user := range got {
+				if user.Id == "" {
+					t.Errorf("GetUsers() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
 }
-
-func TestGetContactByID(t *testing.T) {
-	type args struct {
-		url string
+func TestGetUserByID(t *testing.T) {
+	createdAt, err := time.Parse(time.RFC3339, "2022-12-25T08:54:29.695Z")
+	if err != nil {
+		t.Error(err)
 	}
 	tests := []struct {
 		name string
-		args args
-		want Contact
+		want User
 	}{
 		{
-			name: "Test Get Contact By ID",
-			args: args{
-				url: baseURL + "v1/contacts",
-			},
-			want: Contact{
-				ID:        "433",
-				FirstName: "lq8g98",
-				LastName:  "ws4uj23qtc",
-				Email:     "0t0jweqtyxdz@example.com",
-				DateAdded: "2022-09-24",
-				CompanyID: "123",
+			name: "Test get user by id",
+			want: User{
+				CreatedAt: createdAt,
+				Name:      "Mario Little",
+				Avatar:    "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1009.jpg",
+				Username:  "Everett_Paucek",
+				KnownIps: []string{"201.175.188.189",
+					"43de:bbde:97fa:a4c2:fa61:7f56:d7e7:548c"},
+				Profile: Profile{
+					FirstName:  "Pearlie",
+					LastName:   "Bartoletti",
+					StaticData: []int{100, 200, 300},
+				},
+				Id: "1",
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetContactByID(tt.args.url, 433)
+			got, err := GetUserByID(1)
 			if err != nil {
 				t.Errorf("GetContactByID() error = %v", err)
 				return
 			}
 			if !reflect.DeepEqual(*got, tt.want) {
-				t.Errorf("GetContactByID() got = %v, \n want %v", *got, tt.want)
+				t.Errorf("GetContactByID() \ngot = %v, \n want %v", *got, tt.want)
 			}
 		})
 	}

@@ -1,46 +1,48 @@
 package examples
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-type Contact struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	DateAdded string `json:"dateAdded"`
-	CompanyID string `json:"companyId"`
+type User struct {
+	CreatedAt time.Time `json:"createdAt"`
+	Name      string    `json:"name"`
+	Avatar    string    `json:"avatar"`
+	Username  string    `json:"username"`
+	KnownIps  []string  `json:"knownIps"`
+	Profile   Profile   `json:"profile"`
+	Id        string    `json:"id"`
 }
+type Profile struct {
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	StaticData []int  `json:"staticData"`
+}
+type Users []User
 
-type ContactsRes struct {
-	Data []Contact `json:"contacts"`
+func GetUsers() (Users, error) {
+	res, err := client.Get(baseURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	var users Users
+	err = res.Unmarshal(&users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
-type ContactRes struct {
-	Data Contact `json:"contact"`
-}
-
-func GetContacts(url string) ([]Contact, error) {
+func GetUserByID(id int) (*User, error) {
+	url := fmt.Sprintf("%s%d", baseURL, id)
 	res, err := client.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
-	var contacts ContactsRes
-	err = res.Unmarshal(&contacts)
+	var user User
+	err = res.Unmarshal(&user)
 	if err != nil {
 		return nil, err
 	}
-	return contacts.Data, nil
-}
-
-func GetContactByID(url string, id int) (*Contact, error) {
-	url = fmt.Sprintf("%s/%d", url, id)
-	res, err := client.Get(url, nil)
-	if err != nil {
-		return nil, err
-	}
-	var contact ContactRes
-	err = res.Unmarshal(&contact)
-	if err != nil {
-		return nil, err
-	}
-	return &contact.Data, nil
+	return &user, nil
 }
