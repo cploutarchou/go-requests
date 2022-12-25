@@ -4,7 +4,6 @@ import (
 	"encoding"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -108,7 +107,6 @@ func (r *Response) unmarshalText(v interface{}) error {
 //   - It returns an error if the unmarshal method fails.
 //   - It returns an error if the given interface is not a pointer.
 func (r *Response) Unmarshal(v interface{}) ErrorContentType {
-	fmt.Println("Response:  content-type:", r.getContentType())
 	switch r.getContentType() {
 	case jsonContentType:
 		return r.unmarshalJSON(v)
