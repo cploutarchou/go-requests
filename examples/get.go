@@ -1,5 +1,7 @@
 package examples
 
+import "fmt"
+
 type Contact struct {
 	ID        string `json:"id"`
 	FirstName string `json:"firstName"`
@@ -9,8 +11,11 @@ type Contact struct {
 	CompanyID string `json:"companyId"`
 }
 
-type Contacts struct {
+type ContactsRes struct {
 	Data []Contact `json:"contacts"`
+}
+type ContactRes struct {
+	Data Contact `json:"contact"`
 }
 
 func GetContacts(url string) ([]Contact, error) {
@@ -18,10 +23,24 @@ func GetContacts(url string) ([]Contact, error) {
 	if err != nil {
 		return nil, err
 	}
-	var contacts Contacts
+	var contacts ContactsRes
 	err = res.Unmarshal(&contacts)
 	if err != nil {
 		return nil, err
 	}
 	return contacts.Data, nil
+}
+
+func GetContactByID(url string, id int) (*Contact, error) {
+	url = fmt.Sprintf("%s/%d", url, id)
+	res, err := client.Get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+	var contact ContactRes
+	err = res.Unmarshal(&contact)
+	if err != nil {
+		return nil, err
+	}
+	return &contact.Data, nil
 }
