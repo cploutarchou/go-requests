@@ -60,3 +60,41 @@ func TestGetContasts(t *testing.T) {
 		})
 	}
 }
+
+func TestGetContactByID(t *testing.T) {
+	type args struct {
+		url string
+	}
+	tests := []struct {
+		name string
+		args args
+		want Contact
+	}{
+		{
+			name: "Test Get Contact By ID",
+			args: args{
+				url: baseURL + "v1/contacts",
+			},
+			want: Contact{
+				ID:        "433",
+				FirstName: "lq8g98",
+				LastName:  "ws4uj23qtc",
+				Email:     "0t0jweqtyxdz@example.com",
+				DateAdded: "2022-09-24",
+				CompanyID: "123",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetContactByID(tt.args.url, 433)
+			if err != nil {
+				t.Errorf("GetContactByID() error = %v", err)
+				return
+			}
+			if !reflect.DeepEqual(*got, tt.want) {
+				t.Errorf("GetContactByID() got = %v, \n want %v", *got, tt.want)
+			}
+		})
+	}
+}
