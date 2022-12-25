@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -85,7 +84,6 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	if err != nil {
 		return nil, errors.New("unable to read response body. Error: " + err.Error())
 	}
-	fmt.Println("content type: ", response.Header.Get("Content-Type"))
 	finalResponse := Response{
 		statusCode:  response.StatusCode,
 		header:      response.Header,
