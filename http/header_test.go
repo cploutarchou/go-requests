@@ -636,11 +636,11 @@ func Test_headerImpl_SetContentLocation(t *testing.T) {
 				values: map[string]string{},
 			},
 			args: args{
-				contentLocation: "http://www.example.com",
+				contentLocation: "https://www.example.com",
 			},
 			want: &headerImpl{
 				values: map[string]string{
-					"Content-Location": "http://www.example.com",
+					"Content-Location": "https://www.example.com",
 				},
 			},
 		},

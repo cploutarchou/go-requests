@@ -49,8 +49,7 @@ func (r *Response) Header() http.Header {
 	return r.header
 }
 
-// Body returns a response body in []byte format.
-func (r *Response) Body() []byte {
+func (r *Response) Bytes() []byte {
 	return r.body
 }
 
