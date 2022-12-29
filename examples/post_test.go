@@ -10,9 +10,7 @@ func Test_placePetOrder(t *testing.T) {
 	type args struct {
 		item Order
 	}
-	//str time to time.Time
 	t1, _ := time.Parse("2006-01-02 15:04:05", "2022-12-12 00:00:00")
-
 	tests := []struct {
 		name    string
 		args    args
