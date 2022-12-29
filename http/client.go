@@ -30,6 +30,7 @@ type Client interface {
 	QueryParams() QueryParams
 	DisableTimeouts()
 	EnableTimeouts()
+	Headers() Headers
 	Get(string, http.Header) (*Response, error)
 	Post(string, http.Header, interface{}) (*Response, error)
 	Put(string, http.Header, interface{}) (*Response, error)
@@ -90,7 +91,7 @@ func (c *goHTTPClient) Post(url string, headers http.Header, body interface{}) (
 	if err != nil {
 		return nil, err
 	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodPost, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +121,7 @@ func (c *goHTTPClient) Put(url string, headers http.Header, body interface{}) (*
 	if err != nil {
 		return nil, err
 	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodPut, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +149,7 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 	if err != nil {
 		return nil, err
 	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodDelete, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +215,7 @@ func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (
 	if err != nil {
 		return nil, err
 	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+	response, err := c.do(http.MethodHead, url, headers, data)
 	if err != nil {
 		return nil, err
 	}
@@ -253,4 +254,9 @@ func (c *goHTTPClient) getClient() *http.Client {
 	})
 	return c.client
 
+}
+
+// Headers sets the headers for the client
+func (c *goHTTPClient) Headers() Headers {
+	return c.builder.Headers()
 }
