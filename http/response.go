@@ -1,6 +1,8 @@
 package http
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type Response struct {
 	statusCode int
@@ -17,7 +19,7 @@ func (r *Response) Header() http.Header {
 	return r.header
 }
 
-func (r *Response) Body() []byte {
+func (r *Response) Bytes() []byte {
 	return r.body
 }
 

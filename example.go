@@ -19,10 +19,12 @@ func getGithubClientWithOutConfig() http.Client {
 
 func getGithubClientBySetters() http.Client {
 	_client := http.NewBuilder()
+
 	_client.
 		SetRequestTimeout(50 * time.Second).
 		SetResponseTimeout(50 * time.Second).
 		SetMaxIdleConnections(10)
+
 	_client.Headers().
 		SetAcceptCharset("utf-8").
 		SetAccept("application/json")
@@ -57,6 +59,8 @@ func main() {
 
 func GetExample() {
 	client.DisableTimeouts()
+
+	client.QueryParams().(http.QueryParams).Set("q", "go-requests")
 	response, err := client.Get("https://api.github.com", nil)
 	if err != nil {
 		fmt.Println(err)
