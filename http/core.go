@@ -64,15 +64,17 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	} else {
 		req, err = http.NewRequest(string(method), url, nil)
 	}
-	if c.QueryParams().Values() != nil {
-		q := req.URL.Query()
-		for key, value := range c.QueryParams().Values() {
+	if c.QueryParams() != nil {
+		if c.QueryParams().(QueryParams).Values() != nil {
+			q := req.URL.Query()
+			for key, value := range c.QueryParams().(QueryParams).Values() {
 
-			q.Add(key, value)
+				q.Add(key, value)
+			}
+			req.URL.RawQuery = q.Encode()
 		}
-		req.URL.RawQuery = q.Encode()
+		c.QueryParams().(QueryParams).Reset()
 	}
-	c.QueryParams().Reset()
 	if err != nil {
 		return nil, errors.New("unable to create request")
 	}
