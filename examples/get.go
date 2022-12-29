@@ -1,8 +1,8 @@
 package examples
 
 func findPetsByTag(tag string) (PetsTags, error) {
-	client.QueryParams().Set("tags", tag)
-	resp, err := client.Get(baseURL+"/pet/findByTags", nil)
+	jsonContentClient.QueryParams().Set("tags", tag)
+	resp, err := jsonContentClient.Get(baseURL+"/pet/findByTags", nil)
 	if err != nil {
 		return nil, err
 	}
