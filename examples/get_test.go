@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_findByTag(t *testing.T) {
+func Test_findPetsByTagJSON(t *testing.T) {
 	type args struct {
 		tag string
 	}
@@ -15,7 +15,7 @@ func Test_findByTag(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Test_findByTag",
+			name: "Test_findPetsByTagJSON",
 			args: args{
 				tag: "cm8rvd96sgb7ev7dmli6pqz8vlpfx86egsiw6cejq1q1npe9yu45q27260b5td9ee90eiie7q49rb2xtmo26qq4shqfh6farkm8fz5ddpn7jq64dtdd16e1j8z99cesaxz65bj252y930hbsbfchir4l030z2rhuaf",
 			},
@@ -25,7 +25,7 @@ func Test_findByTag(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := findPetsByTag(tt.args.tag)
+			got, err := findPetsByTagJSON(tt.args.tag)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("findByTag() error = %v, wantErr %v", err, tt.wantErr)
 				return

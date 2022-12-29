@@ -1,6 +1,6 @@
 package examples
 
-func findPetsByTag(tag string) (PetsTags, error) {
+func findPetsByTagJSON(tag string) (PetsTags, error) {
 	jsonContentClient.QueryParams().Set("tags", tag)
 	resp, err := jsonContentClient.Get(baseURL+"/pet/findByTags", nil)
 	if err != nil {
