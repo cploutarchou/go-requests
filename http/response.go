@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -96,7 +97,11 @@ func (r *Response) UnmarshalYAML(v interface{}) error {
 
 // unmarshal text/plain
 func (r *Response) unmarshalText(v interface{}) error {
-	return v.(encoding.TextUnmarshaler).UnmarshalText(r.body)
+	fmt.Println("unmarshalText")
+	if p, ok := v.(encoding.TextUnmarshaler); ok {
+		return p.UnmarshalText(r.body)
+	}
+	return UnsupportedContentType()
 }
 
 // Unmarshal the response body into the given interface.

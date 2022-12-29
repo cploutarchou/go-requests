@@ -1,78 +1,38 @@
 package examples
 
 import (
-	"reflect"
 	"testing"
-	"time"
 )
 
-func TestGetUsers(t *testing.T) {
-
+func Test_findByTag(t *testing.T) {
+	type args struct {
+		tag string
+	}
 	tests := []struct {
-		name string
-		want int
+		name    string
+		args    args
+		want    int
+		wantErr bool
 	}{
 		{
-			name: "Test get all users",
-			want: 39,
+			name: "Test_findByTag",
+			args: args{
+				tag: "cm8rvd96sgb7ev7dmli6pqz8vlpfx86egsiw6cejq1q1npe9yu45q27260b5td9ee90eiie7q49rb2xtmo26qq4shqfh6farkm8fz5ddpn7jq64dtdd16e1j8z99cesaxz65bj252y930hbsbfchir4l030z2rhuaf",
+			},
+			want:    5,
+			wantErr: false,
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetUsers()
-			if err != nil {
-				t.Errorf("GetUsers() error = %v", err)
+			got, err := findPetsByTag(tt.args.tag)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("findByTag() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if len(got) != tt.want {
-				t.Errorf("GetUsers() = %v, want %v", got, tt.want)
-			}
-			for _, user := range got {
-				if user.Id == "" {
-					t.Errorf("GetUsers() = %v, want %v", got, tt.want)
-				}
-			}
-		})
-	}
-}
-func TestGetUserByID(t *testing.T) {
-	createdAt, err := time.Parse(time.RFC3339, "2022-12-25T08:54:29.695Z")
-	if err != nil {
-		t.Error(err)
-	}
-	tests := []struct {
-		name string
-		want User
-	}{
-		{
-			name: "Test get user by id",
-			want: User{
-				CreatedAt: createdAt,
-				Name:      "Mario Little",
-				Avatar:    "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1009.jpg",
-				Username:  "Everett_Paucek",
-				KnownIps: []string{"201.175.188.189",
-					"43de:bbde:97fa:a4c2:fa61:7f56:d7e7:548c"},
-				Profile: Profile{
-					FirstName:  "Pearlie",
-					LastName:   "Bartoletti",
-					StaticData: []int{100, 200, 300},
-				},
-				Id: "1",
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetUserByID(1)
-			if err != nil {
-				t.Errorf("GetContactByID() error = %v", err)
+				t.Errorf("findByTag() = %v, want %v", len(got), tt.want)
 				return
-			}
-			if !reflect.DeepEqual(*got, tt.want) {
-				t.Errorf("GetContactByID() \ngot = %v, \n want %v", *got, tt.want)
 			}
 		})
 	}

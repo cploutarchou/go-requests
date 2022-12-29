@@ -12,20 +12,17 @@ type Method string
 // goHTTPClient is the default implementation of the Client interface
 // it is used to make http requests
 type goHTTPClient struct {
-	builder    *builderImpl
-	client     *http.Client
-	clientOnce sync.Once
-}
-
-func (c *goHTTPClient) getQueryParams() interface{} {
-	if c.builder.QueryParams() == nil {
-		return nil
-	}
-	return c.builder.QueryParams().(interface{})
+	builder     *builderImpl
+	client      *http.Client
+	clientOnce  sync.Once
+	queryParams QueryParams
 }
 
 func (c *goHTTPClient) QueryParams() QueryParams {
-	return c.builder.QueryParams()
+	if c.queryParams == nil {
+		c.queryParams = NewQueryParams()
+	}
+	return c.queryParams
 }
 
 // Client is an interface for http client
@@ -150,7 +147,7 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
-	} 
+	}
 	response, err := c.do(http.MethodGet, url, headers, data)
 	if err != nil {
 		return nil, err

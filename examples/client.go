@@ -8,7 +8,7 @@ import (
 
 var (
 	client  = getClient()
-	baseURL = "https://63a8d253f4962215b588da7e.mockapi.io/api/v1/users/"
+	baseURL = "https://go-requests.wiremockapi.cloud"
 )
 
 func getClient() http.Client {
@@ -18,8 +18,8 @@ func getClient() http.Client {
 		SetContentType("application/json").
 		SetAccept("application/json")
 
-	builder.SetRequestTimeout(50 * time.Second).
-		SetResponseTimeout(50 * time.Second).
+	builder.SetRequestTimeout(10 * time.Second).
+		SetResponseTimeout(10 * time.Second).
 		SetMaxIdleConnections(10)
 	return builder.Build()
 }
