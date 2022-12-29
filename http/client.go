@@ -15,10 +15,16 @@ type goHTTPClient struct {
 	builder    *builderImpl
 	client     *http.Client
 	clientOnce sync.Once
+	params     *QueryParams
+}
+
+func (c *goHTTPClient) QueryParams() QueryParams {
+	return *c.params
 }
 
 // Client is an interface for http client
 type Client interface {
+	QueryParams() QueryParams
 	DisableTimeouts()
 	EnableTimeouts()
 	Get(string, http.Header) (*Response, error)

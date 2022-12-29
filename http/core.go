@@ -52,7 +52,6 @@ func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, er
 //		return c.client.Do(req)
 //	}
 func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*Response, error) {
-	var err error
 	var req *http.Request
 	availableHeaders := c.getHeaders(headers)
 	requestBody, err := c.getBody(availableHeaders.Get("Content-Type"), body)
@@ -65,6 +64,15 @@ func (c *goHTTPClient) do(method Method, url string, headers http.Header, body i
 	} else {
 		req, err = http.NewRequest(string(method), url, nil)
 	}
+	if c.QueryParams().Values() != nil {
+		q := req.URL.Query()
+		for key, value := range c.QueryParams().Values() {
+
+			q.Add(key, value)
+		}
+		req.URL.RawQuery = q.Encode()
+	}
+	c.QueryParams().Reset()
 	if err != nil {
 		return nil, errors.New("unable to create request")
 	}
