@@ -59,7 +59,8 @@ func main() {
 
 func GetExample() {
 	client.DisableTimeouts()
-	client.QueryParams().Set("q", "go-requests")
+
+	client.QueryParams().(http.QueryParams).Set("q", "go-requests")
 	response, err := client.Get("https://api.github.com", nil)
 	if err != nil {
 		fmt.Println(err)
