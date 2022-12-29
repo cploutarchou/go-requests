@@ -37,3 +37,37 @@ func Test_findPetsByTagJSON(t *testing.T) {
 		})
 	}
 }
+
+func Test_findPetsByTagXML(t *testing.T) {
+	type args struct {
+		tag string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "Test_findPetsByTagXML",
+			args: args{
+				tag: "2vjdqvwzhxku1jp06yaa9v5raeco135nuabv8uh8xr3ve6c9dp5cc08v8y1kjq4cgr27cqdhrbt4eezd0l5q3ka77k1qqht84qc17rs7k7noxgzuqp6m2i",
+			},
+			want:    1,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := findPetsByTagXML(tt.args.tag)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("findByTag() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if len(got) != tt.want {
+				t.Errorf("findByTag() = %v, want %v", len(got), tt.want)
+				return
+			}
+		})
+	}
+}

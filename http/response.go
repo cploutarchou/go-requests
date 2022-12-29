@@ -4,7 +4,6 @@ import (
 	"encoding"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -97,7 +96,6 @@ func (r *Response) UnmarshalYAML(v interface{}) error {
 
 // unmarshal text/plain
 func (r *Response) unmarshalText(v interface{}) error {
-	fmt.Println("unmarshalText")
 	if p, ok := v.(encoding.TextUnmarshaler); ok {
 		return p.UnmarshalText(r.body)
 	}
