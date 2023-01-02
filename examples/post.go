@@ -1,7 +1,13 @@
 package examples
 
-func placePetOrder(item *Order) (*Order, error) {
-	res, err := jsonContentClient.Post(baseURL+"/store/order", nil, item)
+import "encoding/json"
+
+func placePetOrder(item Order) (*Order, error) {
+	data, err := json.Marshal(item)
+	if err != nil {
+		return nil, err
+	}
+	res, err := jsonContentClient.Post(baseURL+"/store/order", nil, data)
 	if err != nil {
 		return nil, err
 	}

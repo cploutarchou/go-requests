@@ -42,7 +42,7 @@ func Test_placePetOrder(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := placePetOrder(&tt.args.item)
+			got, err := placePetOrder(tt.args.item)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("placePetOrder() error = %v, wantErr %v", err, tt.wantErr)
 				return
