@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/json"
 	"net"
 	"net/http"
 	"sync"
@@ -32,11 +31,11 @@ type Client interface {
 	EnableTimeouts()
 	Headers() Headers
 	Get(string, http.Header) (*Response, error)
-	Post(string, http.Header, interface{}) (*Response, error)
-	Put(string, http.Header, interface{}) (*Response, error)
-	Patch(string, http.Header, interface{}) (*Response, error)
-	Delete(string, http.Header, interface{}) (*Response, error)
-	Head(string, http.Header, interface{}) (*Response, error)
+	Post(string, http.Header, []byte) (*Response, error)
+	Put(string, http.Header, []byte) (*Response, error)
+	Patch(string, http.Header, []byte) (*Response, error)
+	Delete(string, http.Header, []byte) (*Response, error)
+	Head(string, http.Header, []byte) (*Response, error)
 }
 
 // Get sends a GET request to the specified URL
@@ -86,12 +85,8 @@ func (c *goHTTPClient) Get(url string, headers http.Header) (*Response, error) {
 //		log.Fatal(err)
 //	}
 //	fmt.Println(string(body))
-func (c *goHTTPClient) Post(url string, headers http.Header, body interface{}) (*Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodPost, url, headers, data)
+func (c *goHTTPClient) Post(url string, headers http.Header, body []byte) (*Response, error) {
+	response, err := c.do(http.MethodPost, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -116,12 +111,8 @@ func (c *goHTTPClient) Post(url string, headers http.Header, body interface{}) (
 //	log.Fatal(err)
 //	}
 //	fmt.Println(string(body))
-func (c *goHTTPClient) Put(url string, headers http.Header, body interface{}) (*Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodPut, url, headers, data)
+func (c *goHTTPClient) Put(url string, headers http.Header, body []byte) (*Response, error) {
+	response, err := c.do(http.MethodPut, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -144,12 +135,8 @@ func (c *goHTTPClient) Put(url string, headers http.Header, body interface{}) (*
 //		log.Fatal(err)
 //	}
 //	fmt.Println(string(body))
-func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{}) (*Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodDelete, url, headers, data)
+func (c *goHTTPClient) Delete(url string, headers http.Header, body []byte) (*Response, error) {
+	response, err := c.do(http.MethodDelete, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -189,12 +176,8 @@ func (c *goHTTPClient) Delete(url string, headers http.Header, body interface{})
 //			log.Fatal(err)
 //	}
 //		fmt.Println(string(body))
-func (c *goHTTPClient) Patch(url string, headers http.Header, body interface{}) (*Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodGet, url, headers, data)
+func (c *goHTTPClient) Patch(url string, headers http.Header, body []byte) (*Response, error) {
+	response, err := c.do(http.MethodPatch, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -210,12 +193,8 @@ func (c *goHTTPClient) Patch(url string, headers http.Header, body interface{}) 
 //
 //	Example:
 //		response, err := client.Head("https://www.google.com", nil, nil)
-func (c *goHTTPClient) Head(url string, headers http.Header, body interface{}) (*Response, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	response, err := c.do(http.MethodHead, url, headers, data)
+func (c *goHTTPClient) Head(url string, headers http.Header, body []byte) (*Response, error) {
+	response, err := c.do(http.MethodHead, url, headers, body)
 	if err != nil {
 		return nil, err
 	}
