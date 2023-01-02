@@ -8,10 +8,8 @@ import (
 type builderImpl struct {
 	header  Headers
 	Timeout Timeout
-	builder Builder
 	State   chan string
 	client  *goHTTPClient
-	params  QueryParams
 }
 
 // Builder is the interface that wraps the basic Build method. The Build method returns a Client.
@@ -22,11 +20,6 @@ type Builder interface {
 	SetMaxIdleConnections(maxConnections int) Timeout
 	Headers() Headers
 	Build() Client
-	QueryParams() QueryParams
-}
-
-func (c builderImpl) QueryParams() QueryParams {
-	return c.params
 }
 
 // SetMaxIdleConnections sets the maximum number of idle (keep-alive) connections across all hosts.
@@ -85,7 +78,6 @@ func NewBuilder() Builder {
 		Timeout: newTimeouts(),
 		header:  NewHeaders(),
 		State:   make(chan string, 100),
-		params:  nil,
 	}
 	return builder
 }
