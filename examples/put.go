@@ -1,16 +1,19 @@
 package examples
 
-import "fmt"
+import (
+	"encoding/json"
+)
 
 func updatePet(item *Pet) (*updateRes, error) {
-	res, err := jsonContentClient.Put(baseURL+"/pet", nil, &item)
-	fmt.Println("kokos")
-	fmt.Println(res.Status())
+	data, err := json.Marshal(item)
+	if err != nil {
+		return nil, err
+	}
+	res, err := jsonContentClient.Put(baseURL+"/pet", nil, data)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println(res.String())
 	var response updateRes
 	err = res.Unmarshal(&response)
 	if err != nil {
