@@ -8,7 +8,6 @@ import (
 type builderImpl struct {
 	header  Headers
 	Timeout Timeout
-	builder Builder
 	State   chan string
 	client  *goHTTPClient
 }
