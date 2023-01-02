@@ -2,28 +2,10 @@ package http
 
 import (
 	"bytes"
-	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"io"
 	"net/http"
-	"strings"
 )
-
-// getBody returns the body of the request.
-func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, error) {
-	if body == nil {
-		return nil, nil
-	}
-	switch strings.ToLower(contentType) {
-	case "application/json":
-		return c.interfaceToJSONBytes(body)
-	case "application/xml":
-		return c.interfaceToXMLBytes(body)
-	default:
-		return c.interfaceToJSONBytes(body)
-	}
-}
 
 // do is the main method to make the request
 // It returns the response and an error if something goes wrong
@@ -51,15 +33,12 @@ func (c *goHTTPClient) getBody(contentType string, body interface{}) ([]byte, er
 //		// Return the response
 //		return c.client.Do(req)
 //	}
-func (c *goHTTPClient) do(method Method, url string, headers http.Header, body interface{}) (*Response, error) {
+func (c *goHTTPClient) do(method Method, url string, headers http.Header, body []byte) (*Response, error) {
 	var req *http.Request
+	var err error
 	availableHeaders := c.getHeaders(headers)
-	requestBody, err := c.getBody(availableHeaders.Get("Content-Type"), body)
-	if err != nil {
-		return nil, err
-	}
 	if body != nil {
-		reader := bytes.NewReader(requestBody)
+		reader := bytes.NewReader(body)
 		req, err = http.NewRequest(string(method), url, reader)
 	} else {
 		req, err = http.NewRequest(string(method), url, nil)
@@ -118,22 +97,4 @@ func (c *goHTTPClient) getHeaders(headers http.Header) http.Header {
 		}
 	}
 	return res
-}
-
-// interfaceToJSONBytes converts an interface to a JSON byte array and returns it and an error if something goes wrong
-func (c *goHTTPClient) interfaceToJSONBytes(data interface{}) ([]byte, error) {
-	res, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-// interfaceToXMLBytes converts an interface to an XML byte array and returns it and an error if something goes wrong
-func (c *goHTTPClient) interfaceToXMLBytes(data interface{}) ([]byte, error) {
-	res, err := xml.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
 }
