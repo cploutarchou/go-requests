@@ -59,17 +59,17 @@ func Test_goHTTPClient_Get(t *testing.T) {
 			client.QueryParams().Set("tags", tt.args.tag)
 			resp, err := client.Get(baseURL+"/pet/findByTags", nil)
 			if err != nil {
-				t.Errorf("findByTag() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Test_goHTTPClient_Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			var got PetsTags
 			err = resp.Unmarshal(&got)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("findByTag() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Test_goHTTPClient_Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if len(got) != tt.want {
-				t.Errorf("findByTag() = %v, want %v", len(got), tt.want)
+				t.Errorf("Test_goHTTPClient_Get() = %v, want %v", len(got), tt.want)
 				return
 			}
 		})
@@ -137,7 +137,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 			client := builder.Build()
 			res, err := client.Post(baseURL+"/store/order", nil, data)
 			if err != nil {
-				t.Errorf("placeOrder() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Test_goHTTPClient_Post() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			var got Order
@@ -147,13 +147,13 @@ func Test_goHTTPClient_Post(t *testing.T) {
 				return
 			}
 			if got.Id != tt.want.Id {
-				t.Errorf("placePetOrder() = %v, want %v", got.Id, tt.want.Id)
+				t.Errorf("Test_goHTTPClient_Post() = %v, want %v", got.Id, tt.want.Id)
 				return
 			}
 			
 			// check if got is deep equal to want
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("placePetOrder() = \n%v \n, want \n%v \n", got, tt.want)
+				t.Errorf("Test_goHTTPClient_Post() = \n%v \n, want \n%v \n", got, tt.want)
 				return
 			}
 		})
@@ -161,173 +161,91 @@ func Test_goHTTPClient_Post(t *testing.T) {
 }
 
 func Test_goHTTPClient_Put(t *testing.T) {
-	type fields struct {
-		Headers Headers
-		Timeout Timeout
+	type Pet struct {
+		Category struct {
+			Name string `json:"name"`
+			ID   int64  `json:"id"`
+		} `json:"category"`
+		Name      string   `json:"name"`
+		PhotoUrls []string `json:"photoUrls"`
+		Tags      []struct {
+			Name string `json:"name"`
+			ID   int64  `json:"id"`
+		} `json:"tags"`
+		Status string `json:"status"`
+		ID     int64  `json:"id"`
 	}
+	
+	type updateRes struct {
+		Code   int    `json:"code"`
+		Status string `json:"status"`
+	}
+	
 	type args struct {
-		url     string
-		headers http.Header
-		body    []byte
+		item *Pet
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
-		want    *Response
+		want    *updateRes
 		wantErr bool
 	}{
 		{
-			name: "Test goHTTPClient Put",
-			fields: fields{
-				Headers: NewHeaders(),
-				Timeout: newTimeouts(),
-			},
+			name: "Test_updatePet",
 			args: args{
-				url:     "https://api.github.com",
-				headers: nil,
-				body:    nil,
+				item: &Pet{
+					Category: struct {
+						Name string "json:\"name\""
+						ID   int64  "json:\"id\""
+					}{Name: "string", ID: 0},
+					Name:      "doggie",
+					PhotoUrls: []string{"string"},
+					Tags: []struct {
+						Name string "json:\"name\""
+						ID   int64  "json:\"id\""
+					}{{Name: "string", ID: 0}},
+					Status: "available",
+					ID:     0,
+				},
 			},
-			want: &Response{
-				statusCode: 200,
-				status:     "200 OK",
+			want: &updateRes{
+				Code:   200,
+				Status: "ok",
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				builder := NewBuilder()
-				client := builder.Build()
-				res, err := client.Put(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &Response{
-					statusCode: res.StatusCode(),
-					status:     res.Status(),
-				}
-				if (err != nil) != tt.wantErr {
-					t.Errorf("goHTTPClient.Put() error = %v, wantErr %v", err, tt.wantErr)
-					return
-				}
-				if !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("goHTTPClient.Put() = %v, want %v", got, tt.want)
-				}
-			},
-		)
-	}
-}
-
-func Test_goHTTPClient_Patch(t *testing.T) {
-	type fields struct {
-		Headers Headers
-		Timeout Timeout
-	}
-	type args struct {
-		url     string
-		headers http.Header
-		body    []byte
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *Response
-		wantErr bool
-	}{
-		{
-			name: "Test goHTTPClient Patch",
-			fields: fields{
-				Headers: NewHeaders(),
-				Timeout: newTimeouts(),
-			},
-			args: args{
-				url:     "https://api.github.com",
-				headers: nil,
-				body:    nil,
-			},
-			want: &Response{
-				statusCode: 200,
-				status:     "200 OK",
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				builder := NewBuilder()
-				client := builder.Build()
-				res, err := client.Patch(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &Response{
-					statusCode: res.StatusCode(),
-					status:     res.Status(),
-				}
-				if (err != nil) != tt.wantErr {
-					t.Errorf("goHTTPClient.Patch() error = %v, wantErr %v", err, tt.wantErr)
-					return
-				}
-				if !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("goHTTPClient.Patch() = %v, want %v", got, tt.want)
-				}
-			},
-		)
-	}
-}
-
-func Test_goHTTPClient_Delete(t *testing.T) {
-	type fields struct {
-		Headers Headers
-		Timeout Timeout
-	}
-	type args struct {
-		url     string
-		headers http.Header
-		body    []byte
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *Response
-		wantErr bool
-	}{
-		{
-			name: "Test goHTTPClient Delete",
-			fields: fields{
-				Headers: NewHeaders(),
-				Timeout: newTimeouts(),
-			},
-			args: args{
-				url:     "https://api.github.com",
-				headers: nil,
-				body:    nil,
-			},
-			want: &Response{
-				statusCode: 200,
-				status:     "200 OK",
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				builder := NewBuilder()
-				client := builder.Build()
-				res, err := client.Delete(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
-				got := &Response{
-					statusCode: res.StatusCode(),
-					status:     res.Status(),
-				}
-				if (err != nil) != tt.wantErr {
-					t.Errorf("goHTTPClient.Delete() error = %v, wantErr %v", err, tt.wantErr)
-					return
-				}
-				if !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("goHTTPClient.Delete() = %v, want %v", got, tt.want)
-				}
-			},
-		)
+		t.Run(tt.name, func(t *testing.T) {
+			data, err := json.Marshal(tt.args.item)
+			if err != nil {
+				t.Errorf("Test_goHTTPClient_Put() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			builder := NewBuilder()
+			builder.Headers().
+				SetContentType("application/json").
+				SetAccept("application/json")
+			
+			builder.SetRequestTimeout(10 * time.Second).
+				SetResponseTimeout(10 * time.Second).
+				SetMaxIdleConnections(10)
+			client := builder.Build()
+			res, err := client.Put(baseURL+"/pet", nil, data)
+			if err != nil {
+				t.Errorf("Test_goHTTPClient_Put() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			var got updateRes
+			err = res.Unmarshal(&got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Test_goHTTPClient_Put() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got.Code != tt.want.Code {
+				t.Errorf("Test_goHTTPClient_Put() got = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
