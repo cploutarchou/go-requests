@@ -13,7 +13,6 @@ func updatePet(item *Pet) (*updateRes, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	var response updateRes
 	err = res.Unmarshal(&response)
 	if err != nil {

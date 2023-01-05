@@ -2,7 +2,7 @@ package examples
 
 import (
 	"time"
-	
+
 	"github.com/cploutarchou/go-requests/http"
 )
 
@@ -18,7 +18,7 @@ func getClient(contentType string) http.Client {
 	builder.Headers().
 		SetContentType(contentType).
 		SetAccept(contentType)
-	
+
 	builder.SetRequestTimeout(10 * time.Second).
 		SetResponseTimeout(10 * time.Second).
 		SetMaxIdleConnections(10)
