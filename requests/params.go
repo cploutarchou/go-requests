@@ -1,4 +1,4 @@
-package http
+package requests
 
 type QueryParams interface {
 	// Add adds the key, value pair to the query params.

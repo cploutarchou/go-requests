@@ -1,4 +1,4 @@
-package http
+package requests
 
 type Authorization interface {
 	//	Basic sets the authorization to basic

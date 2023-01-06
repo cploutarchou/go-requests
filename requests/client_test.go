@@ -1,4 +1,4 @@
-package http
+package requests
 
 import (
 	"encoding/json"
@@ -51,7 +51,7 @@ func Test_goHTTPClient_Get(t *testing.T) {
 			builder.Headers().
 				SetContentType("application/json").
 				SetAccept("application/json")
-			
+
 			builder.SetRequestTimeout(10 * time.Second).
 				SetResponseTimeout(10 * time.Second).
 				SetMaxIdleConnections(10)
@@ -130,7 +130,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 			builder.Headers().
 				SetContentType("application/json").
 				SetAccept("application/json")
-			
+
 			builder.SetRequestTimeout(10 * time.Second).
 				SetResponseTimeout(10 * time.Second).
 				SetMaxIdleConnections(10)
@@ -150,7 +150,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 				t.Errorf("Test_goHTTPClient_Post() = %v, want %v", got.Id, tt.want.Id)
 				return
 			}
-			
+
 			// check if got is deep equal to want
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Test_goHTTPClient_Post() = \n%v \n, want \n%v \n", got, tt.want)
@@ -175,12 +175,12 @@ func Test_goHTTPClient_Put(t *testing.T) {
 		Status string `json:"status"`
 		ID     int64  `json:"id"`
 	}
-	
+
 	type updateRes struct {
 		Code   int    `json:"code"`
 		Status string `json:"status"`
 	}
-	
+
 	type args struct {
 		item *Pet
 	}
@@ -226,7 +226,7 @@ func Test_goHTTPClient_Put(t *testing.T) {
 			builder.Headers().
 				SetContentType("application/json").
 				SetAccept("application/json")
-			
+
 			builder.SetRequestTimeout(10 * time.Second).
 				SetResponseTimeout(10 * time.Second).
 				SetMaxIdleConnections(10)
