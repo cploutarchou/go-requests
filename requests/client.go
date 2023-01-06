@@ -1,4 +1,4 @@
-package http
+package requests
 
 import (
 	"net"
@@ -220,6 +220,10 @@ func (c *goHTTPClient) EnableTimeouts() {
 // getClient returns the *http.client if exists or creates a new one and returns it.
 func (c *goHTTPClient) getClient() *http.Client {
 	c.clientOnce.Do(func() {
+		if c.builder.cstClient != nil {
+			c.client = c.builder.cstClient
+			return
+		}
 		c.client = &http.Client{
 			Timeout: c.builder.Timeout.GetRequestTimeout(),
 			Transport: &http.Transport{
