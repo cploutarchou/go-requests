@@ -68,8 +68,8 @@ ____________________
 	}
 
 	type PetsTags []PetTag
-
-    tags := "dogs,cats"
+        tags := "dogs,cats"
+	
 	client.QueryParams().Set("tags", tags)
 	resp, err := jsonContentClient.Get("https://request-url.com/pet/findByTags")
 	if err != nil {
