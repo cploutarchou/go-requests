@@ -69,6 +69,7 @@ func (b *builderImpl) SetResponseTimeout(timeout time.Duration) Timeout {
 	return b.Timeout
 }
 
+// SetHTTPClient sets the http client to be used for the request instead of the default one.
 func (b *builderImpl) SetHTTPClient(c *http.Client) {
 	if c != nil {
 		b.cstClient = c

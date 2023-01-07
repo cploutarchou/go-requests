@@ -19,10 +19,14 @@ const (
 //	ResponseTimeout: the Timeout for the response
 //	MaxIdleConnections: the maximum number of idle connections
 type timeoutImpl struct {
-	ResponseTimeout    time.Duration
-	RequestTimeout     time.Duration
+	// RequestTimeout is the Timeout for the request
+	ResponseTimeout time.Duration
+	// ResponseTimeout is the Timeout for the response
+	RequestTimeout time.Duration
+	// MaxIdleConnections is the maximum number of idle connections
 	MaxIdleConnections int
-	DisableTimeouts    bool
+	// DisableTimeouts disables the timeouts for the client
+	DisableTimeouts bool
 }
 
 // newTimeouts returns a new instance of timeoutImpl
@@ -39,6 +43,7 @@ func newTimeouts() *timeoutImpl {
 	}
 }
 
+// Timeout is an interface that holds the configuration for the http client.
 type Timeout interface {
 	// SetRequestTimeout sets the request Timeout
 	// if the value is 0, the request will not Timeout.
