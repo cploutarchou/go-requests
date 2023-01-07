@@ -50,16 +50,36 @@ go get github.com/cploutarchou/go-requests
 ```
 ____________________
 ### Requests
-1. GET request
+####  GET 
 ```go
-    response, err := client.Get("https://httpbin.org/get")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer response.Body.Close()
-    body, err := ioutil.ReadAll(response.Body)
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Println(string(body))
+    type PetTag struct {
+	    PhotoUrls []string `json:"photoUrls"`
+	    Name      string   `json:"name"`
+	    ID        int64    `json:"id"`
+	    Category  struct {
+		    Name string `json:"name"`
+		    ID   int64  `json:"id"`
+	    } `json:"category"`
+	    Tags []struct {
+		    Name string `json:"name"`
+		    ID   int64  `json:"id"`
+	    } `json:"tags"`
+	    Status string `json:"status"`
+	}
+
+	type PetsTags []PetTag
+
+    tags := "dogs,cats"
+	client.QueryParams().Set("tags", tags)
+	resp, err := jsonContentClient.Get("https://request-url.com/pet/findByTags")
+	if err != nil {
+		fmt.Println(err)
+	}
+	var pets PetsTags
+	// Unmarshal the response body into the struct we support the JSON, XML, YAML,Text formats
+	err = resp.Unmarshal(&pets)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(pets))
 ```
