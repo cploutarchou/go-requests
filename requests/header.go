@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// HeaderType is the type of the header. It is used to set the header value to the header object using the Set method.
 type HeaderType string
 
 const (
@@ -182,6 +183,7 @@ func (h *headerImpl) SetContentMD5(contentMD5 string) Headers {
 	return h
 }
 
+// SetContentRange sets the content range to the header object. The content range is a string in the format "bytes 0-100/1000"
 func (h *headerImpl) SetContentRange(contentRange string) Headers {
 	h.values[string(HeaderTypeContentRange)] = contentRange
 	return h
@@ -264,6 +266,7 @@ func (h *headerImpl) Get(key string) string {
 	return h.values[key]
 }
 
+// SetUserAgent sets the user agent to the header. If the user agent is empty, it will be set to the default user agent.
 func (h *headerImpl) SetUserAgent(s string) {
 	h.Set("User-Agent", s)
 }

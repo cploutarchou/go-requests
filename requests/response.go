@@ -14,10 +14,15 @@ import (
 type ContentType string
 
 const (
+	// jsonContentType is the content type for json.
 	jsonContentType ContentType = "application/json"
-	xmlContentType  ContentType = "application/xml"
+	// xmlContentType is the content type for xml.
+	xmlContentType ContentType = "application/xml"
+	// yamlContentType is the content type for yaml.
 	yamlContentType ContentType = "application/yaml"
+	// textContentType is the content type for text.
 	textContentType ContentType = "text/plain"
+	// noneContentType is the content type for none.
 	noneContentType ContentType = ""
 )
 
@@ -49,6 +54,7 @@ func (r *Response) Header() http.Header {
 	return r.header
 }
 
+// Bytes returns the response body in []byte format.
 func (r *Response) Bytes() []byte {
 	return r.body
 }
@@ -63,6 +69,7 @@ func (r *Response) String() string {
 	return string(r.body)
 }
 
+// getContentType returns the content-type of the response. It returns an empty string if the content-type is not set.
 func (r *Response) getContentType() ContentType {
 	if strings.Contains(r.contentType, "application/json") {
 		return jsonContentType
@@ -94,7 +101,7 @@ func (r *Response) UnmarshalYAML(v interface{}) error {
 	return yaml.Unmarshal(r.body, &v)
 }
 
-// unmarshal text/plain
+// unmarshalText unmarshal the response body into the given interface.
 func (r *Response) unmarshalText(v interface{}) error {
 	if p, ok := v.(encoding.TextUnmarshaler); ok {
 		return p.UnmarshalText(r.body)

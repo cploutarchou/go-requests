@@ -30,6 +30,7 @@ func Test_findPetsByTagJSON(t *testing.T) {
 				t.Errorf("findByTag() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
 			if len(got) != tt.want {
 				t.Errorf("findByTag() = %v, want %v", len(got), tt.want)
 				return
