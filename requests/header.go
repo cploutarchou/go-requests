@@ -116,8 +116,8 @@ type Headers interface {
 	GetAll() map[string][]string
 	//GetAllHttpHeaders returns all http headers as http.Header object
 	GetAllHttpHeaders() http.Header
-
-	SetUserAgent(s string)
+	//SetUserAgent sets the user agent to the header.
+	SetUserAgent(userAgent string)
 }
 
 // headerImpl is the implementation of the Headers interface
