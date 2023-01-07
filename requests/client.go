@@ -30,33 +30,17 @@ type Client interface {
 	DisableTimeouts()
 	EnableTimeouts()
 	Headers() Headers
-	Get(string, http.Header) (*Response, error)
-	Post(string, http.Header, []byte) (*Response, error)
-	Put(string, http.Header, []byte) (*Response, error)
-	Patch(string, http.Header, []byte) (*Response, error)
-	Delete(string, http.Header, []byte) (*Response, error)
-	Head(string, http.Header, []byte) (*Response, error)
+
+	Get(url string, headers ...http.Header) (*Response, error)
+	Post(url string, body []byte, headers ...http.Header) (*Response, error)
+	Put(url string, body []byte, headers ...http.Header) (*Response, error)
+	Patch(url string, body []byte, headers ...http.Header) (*Response, error)
+	Delete(url string, body []byte, headers ...http.Header) (*Response, error)
+	Head(url string, body []byte, headers ...http.Header) (*Response, error)
 }
 
-// Get sends a GET request to the specified URL
-// url: the url to send the request to
-// Headers: the Headers to be sent with the request
-// returns the response and an error if there is one
-// returns an error if the request fails
-//
-//	Example:
-//		response, err := client.Get("https://www.google.com", nil)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer response.Body.Close()
-//	body, err := util.ReadAll(response.Body)
-//	if err != nil {
-//	log.Fatal(err)
-//	}
-//	fmt.Println(string(body))
-func (c *goHTTPClient) Get(url string, headers http.Header) (*Response, error) {
-	response, err := c.do(http.MethodGet, url, headers, nil)
+func (c *goHTTPClient) Get(url string, headers ...http.Header) (*Response, error) {
+	response, err := c.do(http.MethodGet, url, getHeader(headers...), nil)
 	// restore timeout state to default in case it was disabled
 	if c.builder.Timeout.GetRequestTimeout() == 0 {
 		c.builder.Timeout = c.builder.Timeout.Enable()
@@ -67,52 +51,16 @@ func (c *goHTTPClient) Get(url string, headers http.Header) (*Response, error) {
 	return response, nil
 }
 
-// Post sends a POST request to the specified URL
-// url: the url to send the request to
-//
-//	Headers: the Headers to be sent with the request
-//	body: the body to be sent with the request
-//	returns the response and an error if there is one
-//	returns an error if the request fails
-//	Example:
-//		response, err := client.Post("https://www.google.com", nil, nil)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer response.Body.Close()
-//	body, err := io.ReadAll(response.Body)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	fmt.Println(string(body))
-func (c *goHTTPClient) Post(url string, headers http.Header, body []byte) (*Response, error) {
-	response, err := c.do(http.MethodPost, url, headers, body)
+func (c *goHTTPClient) Post(url string, body []byte, headers ...http.Header) (*Response, error) {
+	response, err := c.do(http.MethodPost, url, getHeader(headers...), body)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-// Put sends a PUT request to the specified URL
-// url: the url to send the request to
-// Headers: the Headers to be sent with the request
-// body: the body to be sent with the request
-// returns the response and an error if there is one
-// returns an error if the request fails
-//
-//	Example:
-//		response, err := client.Put("https://www.google.com", nil, nil)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer response.Body.Close()
-//	body, err := io.ReadAll(response.Body)
-//	if err != nil {
-//	log.Fatal(err)
-//	}
-//	fmt.Println(string(body))
-func (c *goHTTPClient) Put(url string, headers http.Header, body []byte) (*Response, error) {
-	response, err := c.do(http.MethodPut, url, headers, body)
+func (c *goHTTPClient) Put(url string, body []byte, headers ...http.Header) (*Response, error) {
+	response, err := c.do(http.MethodPut, url, getHeader(headers...), body)
 	if err != nil {
 		return nil, err
 	}
@@ -120,81 +68,24 @@ func (c *goHTTPClient) Put(url string, headers http.Header, body []byte) (*Respo
 	return response, nil
 }
 
-// Delete sends a DELETE request to the specified URL
-// url: the url to send the request to
-// Headers: the Headers to be sent with the request
-//
-//	Example:
-//	response, err := client.Delete("https://www.google.com", nil, nil)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer response.Body.Close()
-//		body, err := io.ReadAll(response.Body)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	fmt.Println(string(body))
-func (c *goHTTPClient) Delete(url string, headers http.Header, body []byte) (*Response, error) {
-	response, err := c.do(http.MethodDelete, url, headers, body)
+func (c *goHTTPClient) Delete(url string, body []byte, headers ...http.Header) (*Response, error) {
+	response, err := c.do(http.MethodDelete, url, getHeader(headers...), body)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-// Patch sends a PATCH request to the specified URL
-// url: the url to send the request to
-// Headers: the Headers to be sent with the request
-//
-//	Example:
-//		Headers := make(http.Header)
-//		Headers.Set("Content-Type", "application/json")
-//		Headers.Set("Authorization", "Bearer <token>")
-//		client.Headers(Headers)
-//
-// body: the body to be sent with the request
-// returns the response and an error if there is one
-// returns an error if the request fails
-//
-//		Example:
-//			type User struct {
-//				FirstName string `json:"first_name"`
-//				LastName  string `json:"last_name"`
-//			}
-//			user := User{
-//				FirstName: "Christos",
-//				LastName: "Ploutarchou",
-//			}
-//			response, err := client.Patch("https://example.com", Headers, user)
-//			if err != nil {
-//				log.Fatal(err)
-//			}
-//			defer response.Body.Close()
-//		body, err := util.ReadAll(response.Body)
-//		if err != nil {
-//			log.Fatal(err)
-//	}
-//		fmt.Println(string(body))
-func (c *goHTTPClient) Patch(url string, headers http.Header, body []byte) (*Response, error) {
-	response, err := c.do(http.MethodPatch, url, headers, body)
+func (c *goHTTPClient) Patch(url string, body []byte, headers ...http.Header) (*Response, error) {
+	response, err := c.do(http.MethodPatch, url, getHeader(headers...), body)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-// Head sends a HEAD request to the specified URL
-// url: the url to send the request to
-// Headers: the Headers to be sent with the request
-// body: the body to be sent with the request
-// returns the response and an error if there is one
-// returns an error if the request fails
-//
-//	Example:
-//		response, err := client.Head("https://www.google.com", nil, nil)
-func (c *goHTTPClient) Head(url string, headers http.Header, body []byte) (*Response, error) {
-	response, err := c.do(http.MethodHead, url, headers, body)
+func (c *goHTTPClient) Head(url string, body []byte, headers ...http.Header) (*Response, error) {
+	response, err := c.do(http.MethodHead, url, getHeader(headers...), body)
 	if err != nil {
 		return nil, err
 	}

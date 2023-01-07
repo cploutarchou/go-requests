@@ -7,7 +7,7 @@ func placePetOrder(item Order) (*Order, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := jsonContentClient.Post(baseURL+"/store/order", nil, data)
+	res, err := jsonContentClient.Post(baseURL+"/store/order", data)
 	if err != nil {
 		return nil, err
 	}

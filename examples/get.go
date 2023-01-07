@@ -2,7 +2,7 @@ package examples
 
 func findPetsByTagJSON(tag string) (PetsTags, error) {
 	jsonContentClient.QueryParams().Set("tags", tag)
-	resp, err := jsonContentClient.Get(baseURL+"/pet/findByTags", nil)
+	resp, err := jsonContentClient.Get(baseURL + "/pet/findByTags")
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +16,7 @@ func findPetsByTagJSON(tag string) (PetsTags, error) {
 
 func findPetsByTagXML(tag string) (PetsTags, error) {
 	xmlContentClient.QueryParams().Set("tags", tag)
-	resp, err := xmlContentClient.Get(baseURL+"/pet/findByTags", nil)
+	resp, err := xmlContentClient.Get(baseURL + "/pet/findByTags")
 	if err != nil {
 		return nil, err
 	}
