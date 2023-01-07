@@ -83,3 +83,18 @@ ____________________
 	}
 	fmt.Println(string(pets))
 ```
+
+___________
+## For more examples, see the [examples](https://github.com/cploutarchou/go-requests/tree/master/examples) directory.
+__________
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Please make sure to update tests as appropriate.
+## License
+[MIT](https://github.com/cploutarchou/go-requests/blob/master/LICENSE)
+
+### 💰 You can help me by Donating
+[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/cploutarchou) [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/cploutarchou) [![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/cploutarchou) 
+
+### Thanks for your support! 🙏
