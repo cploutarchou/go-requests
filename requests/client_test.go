@@ -135,7 +135,7 @@ func Test_goHTTPClient_Post(t *testing.T) {
 				SetResponseTimeout(10 * time.Second).
 				SetMaxIdleConnections(10)
 			client := builder.Build()
-			res, err := client.Post(baseURL+"/store/order", nil, data)
+			res, err := client.Post(baseURL+"/store/order", data)
 			if err != nil {
 				t.Errorf("Test_goHTTPClient_Post() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -231,7 +231,7 @@ func Test_goHTTPClient_Put(t *testing.T) {
 				SetResponseTimeout(10 * time.Second).
 				SetMaxIdleConnections(10)
 			client := builder.Build()
-			res, err := client.Put(baseURL+"/pet", nil, data)
+			res, err := client.Put(baseURL+"/pet", data)
 			if err != nil {
 				t.Errorf("Test_goHTTPClient_Put() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -289,7 +289,7 @@ func Test_goHTTPClient_Head(t *testing.T) {
 			tt.name, func(t *testing.T) {
 				builder := NewBuilder()
 				client := builder.Build()
-				res, err := client.Head(tt.args.url, tt.fields.Headers.GetAll(), tt.args.body)
+				res, err := client.Head(tt.args.url, tt.args.body, tt.fields.Headers.GetAll())
 				got := &Response{
 					statusCode: res.StatusCode(),
 					status:     res.Status(),
