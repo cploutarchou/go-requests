@@ -338,3 +338,13 @@ func (h *headerImpl) GetAll() map[string][]string {
 func NewHeaders() Headers {
 	return &headerImpl{values: make(map[string]string)}
 }
+
+// getHeader returns the header object of the  ...http.Header object ad http.Header object.
+// If the header object is nil, it returns a new header object
+// If the header object is not nil, it returns the header object
+func getHeader(headers ...http.Header) http.Header {
+	if len(headers) == 0 {
+		return http.Header{}
+	}
+	return headers[0]
+}

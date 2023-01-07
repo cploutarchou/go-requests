@@ -9,7 +9,7 @@ func updatePet(item *Pet) (*updateRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := jsonContentClient.Put(baseURL+"/pet", nil, data)
+	res, err := jsonContentClient.Put(baseURL+"/pet", data)
 	if err != nil {
 		return nil, err
 	}
