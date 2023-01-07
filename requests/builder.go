@@ -17,12 +17,17 @@ type builderImpl struct {
 // Builder is the interface that wraps the basic Build method. The Build method returns a Client.
 // The Client is used to make HTTP requests.
 type Builder interface {
+	//SetRequestTimeout sets the timeout for the HTTP request.
 	SetRequestTimeout(timeout time.Duration) Timeout
+	//SetResponseTimeout sets the timeout for the HTTP response.
 	SetResponseTimeout(timeout time.Duration) Timeout
+	//SetMaxIdleConnections sets the maximum number of idle (keep-alive) connections across all hosts.
 	SetMaxIdleConnections(maxConnections int) Timeout
+	//Headers returns the Headers object that is used to set the headers for the HTTP request.
 	Headers() Headers
+	//Build returns a Client that is used to make HTTP requests.
 	Build() Client
-
+	//SetHTTPClient sets the http client to be used for the request instead of the default one.
 	SetHTTPClient(*http.Client)
 }
 
