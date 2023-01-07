@@ -116,6 +116,8 @@ type Headers interface {
 	GetAll() map[string][]string
 	//GetAllHttpHeaders returns all http headers as http.Header object
 	GetAllHttpHeaders() http.Header
+
+	SetUserAgent(s string)
 }
 
 // headerImpl is the implementation of the Headers interface
@@ -260,6 +262,10 @@ func (h *headerImpl) SetCustom(key, value string) Headers {
 // Get returns the value of the header
 func (h *headerImpl) Get(key string) string {
 	return h.values[key]
+}
+
+func (h *headerImpl) SetUserAgent(s string) {
+	h.Set("User-Agent", s)
 }
 
 // GetAllHttpHeaders returns all http headers as http.Header object

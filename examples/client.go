@@ -31,7 +31,7 @@ func getCustomClient() requests.Client {
 	builder := requests.NewBuilder()
 	builder.Headers().
 		SetContentType("application/json").
-		SetAccept("application/json")
+		SetAccept("application/json").SetUserAgent("go-requests")
 	builder.SetHTTPClient(customClient)
 	return builder.Build()
 }
@@ -41,9 +41,11 @@ func getClient(contentType string) requests.Client {
 	// set content type and accept to application/json
 	builder.Headers().
 		SetContentType(contentType).
-		SetAccept(contentType)
+		SetAccept(contentType).
+		SetUserAgent("go-requests")
 	builder.SetRequestTimeout(10 * time.Second).
 		SetResponseTimeout(10 * time.Second).
 		SetMaxIdleConnections(10)
+
 	return builder.Build()
 }
