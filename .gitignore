@@ -27,3 +27,4 @@ dist/
 
 /tmp/
 .goreleaser.yaml
+dist/
