@@ -1,11 +1,10 @@
 package examples
 
 import (
+	"github.com/cploutarchou/go-requests"
 	"net"
 	"net/http"
 	"time"
-
-	"github.com/cploutarchou/go-requests/requests"
 )
 
 var (
@@ -15,7 +14,7 @@ var (
 	baseURL           = "https://go-requests.wiremockapi.cloud"
 )
 
-func getCustomClient() requests.Client {
+func getCustomClient() go_requests.Client {
 	// create a custom http client that allows you to set your own http client set headers to accept and content type to application/json
 	customClient := &http.Client{
 		Timeout: 10 * time.Second,
@@ -28,7 +27,7 @@ func getCustomClient() requests.Client {
 		},
 	}
 	// set content type and accept to application/json
-	builder := requests.NewBuilder()
+	builder := go_requests.NewBuilder()
 	builder.Headers().
 		SetContentType("application/json").
 		SetAccept("application/json").SetUserAgent("go-requests")
@@ -36,8 +35,8 @@ func getCustomClient() requests.Client {
 	return builder.Build()
 }
 
-func getClient(contentType string) requests.Client {
-	builder := requests.NewBuilder()
+func getClient(contentType string) go_requests.Client {
+	builder := go_requests.NewBuilder()
 	// set content type and accept to application/json
 	builder.Headers().
 		SetContentType(contentType).

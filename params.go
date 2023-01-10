@@ -1,4 +1,4 @@
-package requests
+package go_requests
 
 // QueryParams is the interface for query params. It is used to add, set, get, delete and clone query params.
 type QueryParams interface {

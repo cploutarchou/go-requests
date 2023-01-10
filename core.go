@@ -1,4 +1,4 @@
-package requests
+package go_requests
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package requests
+package go_requests
 
 type Authorization interface {
 	//	Basic sets the authorization to basic
