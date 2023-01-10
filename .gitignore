@@ -26,3 +26,4 @@ coverage.out
 dist/
 
 /tmp/
+.goreleaser.yaml
