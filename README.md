@@ -9,7 +9,13 @@ go get github.com/cploutarchou/go-requests
 ``` 
     
 ## Usage
+________________________
+### Import the package :
 
+```go
+    import requests "github.com/cploutarchou/go-requests"
+
+```
 ### Client
 1. Create a new client with the default configuration
 ```go
